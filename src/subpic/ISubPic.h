@@ -169,8 +169,6 @@ interface ISubPicAllocator : public IUnknown
 	STDMETHOD (GetStatic) (ISubPic** ppSubPic /*[out]*/) PURE;
 	STDMETHOD (AllocDynamic) (ISubPic** ppSubPic /*[out]*/) PURE;
 
-	STDMETHOD_(bool, IsDynamicWriteOnly) () PURE;
-
 	STDMETHOD (ChangeDevice) (IUnknown* pDev) PURE;
 	STDMETHOD (SetMaxTextureSize) (SIZE MaxTextureSize) PURE;
 };
@@ -183,15 +181,11 @@ class ISubPicAllocatorImpl : public CUnknown, public ISubPicAllocator
 private:
 	CSize m_cursize;
 	CRect m_curvidrect;
-	bool m_fDynamicWriteOnly;
 
 	virtual bool Alloc(bool fStatic, ISubPic** ppSubPic) = 0;
 
-protected:
-	bool m_fPow2Textures;
-
 public:
-	ISubPicAllocatorImpl(SIZE cursize, bool fDynamicWriteOnly, bool fPow2Textures);
+	ISubPicAllocatorImpl(SIZE cursize);
 
 	DECLARE_IUNKNOWN;
 	STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv);
@@ -202,7 +196,6 @@ public:
 	STDMETHODIMP SetCurVidRect(RECT curvidrect);
 	STDMETHODIMP GetStatic(ISubPic** ppSubPic);
 	STDMETHODIMP AllocDynamic(ISubPic** ppSubPic);
-	STDMETHODIMP_(bool) IsDynamicWriteOnly();
 	STDMETHODIMP ChangeDevice(IUnknown* pDev);
 	STDMETHODIMP SetMaxTextureSize(SIZE MaxTextureSize) { return E_NOTIMPL; };
 };
@@ -286,7 +279,7 @@ protected:
 
 	CComPtr<ISubPicAllocator> m_pAllocator;
 
-	HRESULT RenderTo(ISubPic* pSubPic, REFERENCE_TIME rtStart, REFERENCE_TIME rtStop, double fps, BOOL bIsAnimated);
+	HRESULT RenderTo(ISubPic* pSubPic, REFERENCE_TIME rtStart, REFERENCE_TIME rtStop, double fps);
 
 public:
 	ISubPicQueueImpl(ISubPicAllocator* pAllocator, HRESULT* phr);

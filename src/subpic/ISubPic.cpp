@@ -189,11 +189,9 @@ STDMETHODIMP ISubPicImpl::SetVirtualTextureSize(const SIZE pSize, const POINT pT
 // ISubPicAllocatorImpl
 //
 
-ISubPicAllocatorImpl::ISubPicAllocatorImpl(SIZE cursize, bool fDynamicWriteOnly, bool fPow2Textures)
+ISubPicAllocatorImpl::ISubPicAllocatorImpl(SIZE cursize)
     : CUnknown(NAME("ISubPicAllocatorImpl"), NULL)
     , m_cursize(cursize)
-    , m_fDynamicWriteOnly(fDynamicWriteOnly)
-    , m_fPow2Textures(fPow2Textures)
 {
     m_curvidrect = CRect(CPoint(0, 0), m_cursize);
 }
@@ -248,11 +246,6 @@ STDMETHODIMP ISubPicAllocatorImpl::AllocDynamic(ISubPic** ppSubPic)
     (*ppSubPic)->SetSize(m_cursize, m_curvidrect);
 
     return S_OK;
-}
-
-STDMETHODIMP_(bool) ISubPicAllocatorImpl::IsDynamicWriteOnly()
-{
-    return(m_fDynamicWriteOnly);
 }
 
 STDMETHODIMP ISubPicAllocatorImpl::ChangeDevice(IUnknown* pDev)
@@ -374,7 +367,7 @@ STDMETHODIMP ISubPicQueueImpl::SetTime(REFERENCE_TIME rtNow)
 
 // private
 
-HRESULT ISubPicQueueImpl::RenderTo(ISubPic* pSubPic, REFERENCE_TIME rtStart, REFERENCE_TIME rtStop, double fps, BOOL bIsAnimated)
+HRESULT ISubPicQueueImpl::RenderTo(ISubPic* pSubPic, REFERENCE_TIME rtStart, REFERENCE_TIME rtStop, double fps)
 {
     HRESULT hr = E_FAIL;
 
@@ -393,7 +386,7 @@ HRESULT ISubPicQueueImpl::RenderTo(ISubPic* pSubPic, REFERENCE_TIME rtStart, REF
        && SUCCEEDED(pSubPic->Lock(spd)))
     {
         CRect r(0, 0, 0, 0);
-        hr = pSubPicProvider->Render(spd, bIsAnimated ? rtStart : ((rtStart + rtStop) / 2), fps, r);
+        hr = pSubPicProvider->Render(spd, ((rtStart + rtStop) / 2), fps, r);
 
         pSubPic->SetStart(rtStart);
         pSubPic->SetStop(rtStop);
@@ -476,19 +469,8 @@ STDMETHODIMP_(bool) CSubPicQueueNoThread::LookupSubPic(REFERENCE_TIME rtNow, CCo
                     if(SUCCEEDED(hr2 = pSubPicProvider->GetTextureSize(pos, MaxTextureSize, VirtualSize, VirtualTopLeft)))
                         m_pAllocator->SetMaxTextureSize(MaxTextureSize);
 
-                    if(m_pAllocator->IsDynamicWriteOnly())
-                    {
-                        CComPtr<ISubPic> pStatic;
-                        if(SUCCEEDED(m_pAllocator->GetStatic(&pStatic))
-                           && SUCCEEDED(RenderTo(pStatic, rtStart, rtStop, fps, false))
-                           && SUCCEEDED(pStatic->CopyTo(pSubPic)))
-                            ppSubPic = pSubPic;
-                    }
-                    else
-                    {
-                        if(SUCCEEDED(RenderTo(m_pSubPic, rtStart, rtStop, fps, false)))
-                            ppSubPic = pSubPic;
-                    }
+                    if(SUCCEEDED(RenderTo(m_pSubPic, rtStart, rtStop, fps)))
+                        ppSubPic = pSubPic;
                     if(SUCCEEDED(hr2))
                         pSubPic->SetVirtualTextureSize(VirtualSize, VirtualTopLeft);
                 }
