@@ -953,9 +953,6 @@ static __forceinline DWORD safe_subtract(DWORD a, DWORD b)
 #endif
 }
 
-// For CPUID usage in Rasterizer::Draw
-#include "../dsutil/vd.h"
-
 static const __int64 _00ff00ff00ff00ff = 0x00ff00ff00ff00ffi64;
 
 // some helper procedures (Draw is so big)
@@ -1803,9 +1800,6 @@ CRect Rasterizer::Draw(SubPicDesc& spd, CRect& clipRect, byte* pAlphaMask, int x
     bbox.SetRect(x, y, x + w, y + h);
     bbox &= CRect(0, 0, spd.w, spd.h);
 
-    // CPUID from VDub
-    bool fSSE2 = !!(g_cpuid.m_flags & CCpuID::sse2);
-
 #ifdef _VSMOD // patch m006. moveable vector clip
     mod_vc.hfull = h;
     mod_vc.curpos = CPoint(x, y);
@@ -1865,26 +1859,12 @@ CRect Rasterizer::Draw(SubPicDesc& spd, CRect& clipRect, byte* pAlphaMask, int x
                 // fBody is true if we're rendering a fill or a shadow.
                 if (fBody)
                 {
-                    if (fSSE2)
-                    {
-                        Draw_noAlpha_spFF_Body_sse2(rnfo);
-                    }
-                    else
-                    {
-                        Draw_noAlpha_spFF_Body_0(rnfo);
-                    }
+                    Draw_noAlpha_spFF_Body_sse2(rnfo);
                 }
                 // Not painting body, ie. painting border without fill in it
                 else
                 {
-                    if (fSSE2)
-                    {
-                        Draw_noAlpha_spFF_noBody_sse2(rnfo);
-                    }
-                    else
-                    {
-                        Draw_noAlpha_spFF_noBody_0(rnfo);
-                    }
+                    Draw_noAlpha_spFF_noBody_sse2(rnfo);
                 }
             }
             // not (switchpts[1] == 0xFFFFFFFF)
@@ -1895,26 +1875,12 @@ CRect Rasterizer::Draw(SubPicDesc& spd, CRect& clipRect, byte* pAlphaMask, int x
 
                 if (fBody)
                 {
-                    if (fSSE2)
-                    {
-                        Draw_noAlpha_sp_Body_sse2(rnfo);
-                    }
-                    else
-                    {
-                        Draw_noAlpha_sp_Body_0(rnfo);
-                    }
+                    Draw_noAlpha_sp_Body_sse2(rnfo);
                 }
                 // Not body
                 else
                 {
-                    if (fSSE2)
-                    {
-                        Draw_noAlpha_sp_noBody_sse2(rnfo);
-                    }
-                    else
-                    {
-                        Draw_noAlpha_sp_noBody_0(rnfo);
-                    }
+                    Draw_noAlpha_sp_noBody_sse2(rnfo);
                 }
             }
         }
@@ -1925,25 +1891,11 @@ CRect Rasterizer::Draw(SubPicDesc& spd, CRect& clipRect, byte* pAlphaMask, int x
             {
                 if (fBody)
                 {
-                    if (fSSE2)
-                    {
-                        Draw_Alpha_spFF_Body_sse2(rnfo);
-                    }
-                    else
-                    {
-                        Draw_Alpha_spFF_Body_0(rnfo);
-                    }
+                    Draw_Alpha_spFF_Body_sse2(rnfo);
                 }
                 else
                 {
-                    if (fSSE2)
-                    {
-                        Draw_Alpha_spFF_noBody_sse2(rnfo);
-                    }
-                    else
-                    {
-                        Draw_Alpha_spFF_noBody_0(rnfo);
-                    }
+                    Draw_Alpha_spFF_noBody_sse2(rnfo);
                 }
             }
             else
@@ -1952,25 +1904,11 @@ CRect Rasterizer::Draw(SubPicDesc& spd, CRect& clipRect, byte* pAlphaMask, int x
 
                 if (fBody)
                 {
-                    if (fSSE2)
-                    {
-                        Draw_Alpha_sp_Body_sse2(rnfo);
-                    }
-                    else
-                    {
-                        Draw_Alpha_sp_Body_0(rnfo);
-                    }
+                    Draw_Alpha_sp_Body_sse2(rnfo);
                 }
                 else
                 {
-                    if (fSSE2)
-                    {
-                        Draw_Alpha_sp_noBody_sse2(rnfo);
-                    }
-                    else
-                    {
-                        Draw_Alpha_sp_noBody_0(rnfo);
-                    }
+                    Draw_Alpha_sp_noBody_sse2(rnfo);
                 }
             }
         }
@@ -1988,26 +1926,12 @@ CRect Rasterizer::Draw(SubPicDesc& spd, CRect& clipRect, byte* pAlphaMask, int x
                 // fBody is true if we're rendering a fill or a shadow.
                 if(fBody)
                 {
-                    if(fSSE2)
-                    {
-                        Draw_Grad_noAlpha_spFF_Body_sse2(rnfo);
-                    }
-                    else
-                    {
-                        Draw_Grad_noAlpha_spFF_Body_0(rnfo);
-                    }
+                    Draw_Grad_noAlpha_spFF_Body_sse2(rnfo);
                 }
                 // Not painting body, ie. painting border without fill in it
                 else
                 {
-                    if(fSSE2)
-                    {
-                        Draw_Grad_noAlpha_spFF_noBody_sse2(rnfo);
-                    }
-                    else
-                    {
-                        Draw_Grad_noAlpha_spFF_noBody_0(rnfo);
-                    }
+                    Draw_Grad_noAlpha_spFF_noBody_sse2(rnfo);
                 }
             }
             // not (switchpts[1] == 0xFFFFFFFF)
@@ -2018,26 +1942,12 @@ CRect Rasterizer::Draw(SubPicDesc& spd, CRect& clipRect, byte* pAlphaMask, int x
 
                 if(fBody)
                 {
-                    if(fSSE2)
-                    {
-                        Draw_Grad_noAlpha_sp_Body_sse2(rnfo);
-                    }
-                    else
-                    {
-                        Draw_Grad_noAlpha_sp_Body_0(rnfo);
-                    }
+                    Draw_Grad_noAlpha_sp_Body_sse2(rnfo);
                 }
                 // Not body
                 else
                 {
-                    if(fSSE2)
-                    {
-                        Draw_Grad_noAlpha_sp_noBody_sse2(rnfo);
-                    }
-                    else
-                    {
-                        Draw_Grad_noAlpha_sp_noBody_0(rnfo);
-                    }
+                    Draw_Grad_noAlpha_sp_noBody_sse2(rnfo);
                 }
             }
         }
@@ -2048,25 +1958,11 @@ CRect Rasterizer::Draw(SubPicDesc& spd, CRect& clipRect, byte* pAlphaMask, int x
             {
                 if(fBody)
                 {
-                    if(fSSE2)
-                    {
-                        Draw_Grad_Alpha_spFF_Body_sse2(rnfo);
-                    }
-                    else
-                    {
-                        Draw_Grad_Alpha_spFF_Body_0(rnfo);
-                    }
+                    Draw_Grad_Alpha_spFF_Body_sse2(rnfo);
                 }
                 else
                 {
-                    if(fSSE2)
-                    {
-                        Draw_Grad_Alpha_spFF_noBody_sse2(rnfo);
-                    }
-                    else
-                    {
-                        Draw_Grad_Alpha_spFF_noBody_0(rnfo);
-                    }
+                    Draw_Grad_Alpha_spFF_noBody_sse2(rnfo);
                 }
             }
             else
@@ -2075,25 +1971,11 @@ CRect Rasterizer::Draw(SubPicDesc& spd, CRect& clipRect, byte* pAlphaMask, int x
 
                 if(fBody)
                 {
-                    if(fSSE2)
-                    {
-                        Draw_Grad_Alpha_sp_Body_sse2(rnfo);
-                    }
-                    else
-                    {
-                        Draw_Grad_Alpha_sp_Body_0(rnfo);
-                    }
+                    Draw_Grad_Alpha_sp_Body_sse2(rnfo);
                 }
                 else
                 {
-                    if(fSSE2)
-                    {
-                        Draw_Grad_Alpha_sp_noBody_sse2(rnfo);
-                    }
-                    else
-                    {
-                        Draw_Grad_Alpha_sp_noBody_0(rnfo);
-                    }
+                    Draw_Grad_Alpha_sp_noBody_sse2(rnfo);
                 }
             }
         }
@@ -2117,8 +1999,6 @@ CRect Rasterizer::Draw(SubPicDesc& spd, CRect& clipRect, byte* pAlphaMask, int x
 #if 0
 void Rasterizer::FillSolidRect(SubPicDesc& spd, int x, int y, int nWidth, int nHeight, DWORD lColor)
 {
-    bool fSSE2 = !!(g_cpuid.m_flags & CCpuID::sse2);
-
     // Warning : lColor is AARRGGBB (same format as DirectX D3DCOLOR_ARGB)
     for(int wy = y; wy < y + nHeight; wy++)
     {
@@ -2130,18 +2010,12 @@ void Rasterizer::FillSolidRect(SubPicDesc& spd, int x, int y, int nWidth, int nH
 #else
 void Rasterizer::FillSolidRect(SubPicDesc& spd, int x, int y, int nWidth, int nHeight, DWORD lColor)
 {
-    bool fSSE2 = !!(g_cpuid.m_flags & CCpuID::sse2);
-
     for(int wy = y; wy < y + nHeight; wy++)
     {
         DWORD* dst = (DWORD*)((BYTE*)spd.bits + spd.pitch * wy) + x;
 
-        if(fSSE2)
-            for(int wt = 0; wt < nWidth; ++wt)
-                pixmix_sse2(&dst[wt], lColor, 0x40);	// 0x40 because >> 6 in pixmix (to preserve tranparency)
-        else
-            for(int wt = 0; wt < nWidth; ++wt)
-                pixmix(&dst[wt], lColor, 0x40);
+        for(int wt = 0; wt < nWidth; ++wt)
+            pixmix_sse2(&dst[wt], lColor, 0x40);	// 0x40 because >> 6 in pixmix (to preserve tranparency)
     }
 }
 #endif

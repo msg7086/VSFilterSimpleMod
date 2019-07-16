@@ -24,7 +24,6 @@
 #include <winddk/devioctl.h>
 #include <winddk/ntddcdrm.h>
 #include "DSUtil.h"
-#include "Mpeg2Def.h"
 #include <moreuuids.h>
 
 #include <initguid.h>

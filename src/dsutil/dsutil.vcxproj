@@ -152,44 +152,6 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="a_yuv2rgb.asm">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ml /safeseh /c /coff /Cx /nologo /Fo"$(IntDir)%(Filename).obj" "%(FullPath)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ml /safeseh /c /coff /Cx /nologo /Fo"$(IntDir)%(Filename).obj" "%(FullPath)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">yasm -X vc -g cv8 -f "$(Platform)" -o "$(IntDir)%(Filename).ob"j "%(FullPath)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">yasm -X vc -g cv8 -f "$(Platform)" -o "$(IntDir)%(Filename).ob"j "%(FullPath)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="a_yuvtable.asm">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ml /safeseh /c /coff /Cx /nologo /Fo"$(IntDir)%(Filename).obj" "%(FullPath)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ml /safeseh /c /coff /Cx /nologo /Fo"$(IntDir)%(Filename).obj" "%(FullPath)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ml64 /c /coff /Cx /nologo /Fo"$(IntDir)%(Filename).obj" "%(FullPath)</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ml64 /c /coff /Cx /nologo /Fo"$(IntDir)%(Filename).obj" "%(FullPath)</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="convert_a.asm">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ml /safeseh /c /coff /Cx /nologo /Fo"$(IntDir)%(Filename).obj" "%(FullPath)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ml /safeseh /c /coff /Cx /nologo /Fo"$(IntDir)%(Filename).obj" "%(FullPath)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ml64 /c /coff /Cx /nologo /Fo"$(IntDir)%(Filename).obj" "%(FullPath)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ml64 /c /coff /Cx /nologo /Fo"$(IntDir)%(Filename).obj" "%(FullPath)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename).obj;%(Outputs)</Outputs>
-    </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="DSUtil.cpp" />
     <ClCompile Include="MediaTypes.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -199,26 +161,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="text.cpp" />
-    <ClCompile Include="vd.cpp" />
-    <ClCompile Include="vd_asm.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DSMPropertyBag.h" />
     <ClInclude Include="DSUtil.h" />
-    <ClInclude Include="FontInstaller.h" />
-    <ClInclude Include="GolombBuffer.h" />
-    <ClInclude Include="H264Nalu.h" />
-    <ClInclude Include="HdmvClipInfo.h" />
-    <ClInclude Include="MediaTypeEx.h" />
     <ClInclude Include="MediaTypes.h" />
-    <ClInclude Include="Mpeg2Def.h" />
-    <ClInclude Include="NullRenderers.h" />
     <ClInclude Include="SharedInclude.h" />
     <ClInclude Include="simd_common.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="text.h" />
-    <ClInclude Include="vd.h" />
-    <ClInclude Include="vd_asm.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

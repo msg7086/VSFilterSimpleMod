@@ -144,9 +144,7 @@ void CWord::Paint(CPoint p, CPoint org)
         m_pOpaqueBox->Paint(p, org);
 }
 
-#ifdef _VSMOD
 #include <emmintrin.h>
-#endif
 
 void CWord::Transform(CPoint org)
 {
@@ -166,12 +164,10 @@ void CWord::Transform(CPoint org)
     double zrnd = m_style.mod_rand.Z * 100;
 
     srand(m_style.mod_rand.Seed);
-    // CPUID from VDub
-    bool fSSE2 = !!(g_cpuid.m_flags & CCpuID::sse2);
 
     // SSE code
     // speed up ~1.5-1.7x
-    if(fSSE2)
+    if(1)
     {
         __m128 __xshift = _mm_set_ps1(m_style.fontShiftX);
         __m128 __yshift = _mm_set_ps1(m_style.fontShiftY);

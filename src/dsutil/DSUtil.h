@@ -35,12 +35,7 @@
 #endif
 #endif */
 
-#include "NullRenderers.h"
-#include "HdmvClipInfo.h"
-#include "H264Nalu.h"
 //#include "MediaTypes.h"
-#include "MediaTypeEx.h"
-#include "vd.h"
 #include "text.h"
 
 #define LCID_NOSUBTITLES			-1
