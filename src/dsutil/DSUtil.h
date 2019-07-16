@@ -40,10 +40,6 @@
 
 #define LCID_NOSUBTITLES			-1
 
-extern LCID    ISO6391ToLcid(LPCSTR code);
-extern LCID    ISO6392ToLcid(LPCSTR code);
-extern CString ISO6391To6392(LPCSTR code);
-extern CString ISO6392To6391(LPCSTR code);
 extern BOOL CFileGetStatus(LPCTSTR lpszFileName, CFileStatus& status);
 
 #define QI(i) (riid == __uuidof(i)) ? GetInterface((i*)this, ppv) :

@@ -49,11 +49,9 @@ protected:
     CComPtr<ISubPicQueue> m_pSubPicQueue;
     CComPtr<ISubPicProvider> m_pSubPicProvider;
     DWORD_PTR m_SubPicProviderId;
+    int m_CharSet;
 
 public:
-    CFilter() : m_SubPicProviderId(0)
-    {
-    }
     virtual ~CFilter()
     {
     }
@@ -108,15 +106,9 @@ public:
 
         return(true);
     }
-};
 
-class CTextSubFilter : virtual public CFilter
-{
-    int m_CharSet;
-
-public:
-    CTextSubFilter(CString fn = _T(""), int CharSet = DEFAULT_CHARSET, float fps = -1)
-        : m_CharSet(CharSet)
+    CFilter(CString fn = _T(""), int CharSet = DEFAULT_CHARSET, float fps = -1)
+        : m_CharSet(CharSet), m_SubPicProviderId(0)
     {
         if(!fn.IsEmpty()) Open(fn, CharSet);
     }
@@ -155,12 +147,10 @@ namespace AviSynthPlus
 
 static bool s_fSwapUV = false;
 
-class CAvisynthFilter : public GenericVideoFilter, virtual public CFilter
+class CTextSubAvisynthFilter : public GenericVideoFilter, public CFilter
 {
 public:
     VFRTranslator *vfr;
-
-    CAvisynthFilter(PClip c, IScriptEnvironment* env, VFRTranslator *_vfr = 0) : GenericVideoFilter(c), vfr(_vfr) {}
 
     PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env)
     {
@@ -198,14 +188,10 @@ public:
 
         return(frame);
     }
-};
 
-class CTextSubAvisynthFilter : public CTextSubFilter, public CAvisynthFilter
-{
-public:
     CTextSubAvisynthFilter(PClip c, IScriptEnvironment* env, const char* fn, int CharSet = DEFAULT_CHARSET, float fps = -1, VFRTranslator *vfr = 0) //vfr patch
-        : CTextSubFilter(CString(fn), CharSet, fps)
-        , CAvisynthFilter(c, env, vfr)
+        : CFilter(CString(fn), CharSet, fps)
+        , GenericVideoFilter(c), vfr(vfr)
     {
         if(!m_pSubPicProvider)
 #ifdef _VSMOD
@@ -321,9 +307,9 @@ namespace VapourSynth {
 #include <VapourSynth.h>
 #include <VSHelper.h>
 
-    class CTextSubVapourSynthFilter : public CTextSubFilter {
+    class CTextSubVapourSynthFilter : public CFilter {
     public:
-        CTextSubVapourSynthFilter(const char * file, const int charset, const float fps, int * error) : CTextSubFilter(CString(file), charset, fps) {
+        CTextSubVapourSynthFilter(const char * file, const int charset, const float fps, int * error) : CFilter(CString(file), charset, fps) {
             *error = !m_pSubPicProvider ? 1 : 0;
         }
     };

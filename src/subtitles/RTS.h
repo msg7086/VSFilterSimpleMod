@@ -218,7 +218,7 @@ public:
 };
 
 [uuid("537DCACA-2812-4a4f-B2C6-1A34C17ADEB0")]
-class CRenderedTextSubtitle : public CSimpleTextSubtitle, public ISubPicProviderImpl, public ISubStream
+class CRenderedTextSubtitle : public CSimpleTextSubtitle, public ISubPicProviderImpl
 {
     CAtlMap<int, CSubtitle*> m_subtitleCache;
 
@@ -280,11 +280,4 @@ public:
 
     // IPersist
     STDMETHODIMP GetClassID(CLSID* pClassID);
-
-    // ISubStream
-    STDMETHODIMP_(int) GetStreamCount();
-    STDMETHODIMP GetStreamInfo(int i, WCHAR** ppName, LCID* pLCID);
-    STDMETHODIMP_(int) GetStream();
-    STDMETHODIMP SetStream(int iStream);
-    STDMETHODIMP Reload();
 };
