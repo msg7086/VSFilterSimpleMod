@@ -3306,10 +3306,10 @@ STDMETHODIMP CRenderedTextSubtitle::NonDelegatingQueryInterface(REFIID riid, voi
 
 // ISubPicProvider
 
-STDMETHODIMP_(POSITION) CRenderedTextSubtitle::GetStartPosition(REFERENCE_TIME rt, double fps)
+STDMETHODIMP_(POSITION) CRenderedTextSubtitle::GetStartPosition(REFERENCE_TIME rt)
 {
     int iSegment = -1;
-    SearchSubs((int)(rt / 10000), fps, &iSegment, NULL);
+    SearchSubs((int)(rt / 10000), &iSegment, NULL);
 
     if(iSegment < 0) iSegment = 0;
 
@@ -3327,14 +3327,14 @@ STDMETHODIMP_(POSITION) CRenderedTextSubtitle::GetNext(POSITION pos)
     return(stss ? (POSITION)(iSegment + 1) : NULL);
 }
 
-STDMETHODIMP_(REFERENCE_TIME) CRenderedTextSubtitle::GetStart(POSITION pos, double fps)
+STDMETHODIMP_(REFERENCE_TIME) CRenderedTextSubtitle::GetStart(POSITION pos)
 {
-    return(10000i64 * TranslateSegmentStart((int)pos - 1, fps));
+    return(10000i64 * TranslateSegmentStart((int)pos - 1));
 }
 
-STDMETHODIMP_(REFERENCE_TIME) CRenderedTextSubtitle::GetStop(POSITION pos, double fps)
+STDMETHODIMP_(REFERENCE_TIME) CRenderedTextSubtitle::GetStop(POSITION pos)
 {
-    return(10000i64 * TranslateSegmentEnd((int)pos - 1, fps));
+    return(10000i64 * TranslateSegmentEnd((int)pos - 1));
 }
 
 struct LSub
@@ -3349,7 +3349,7 @@ static int lscomp(const void* ls1, const void* ls2)
     return(ret);
 }
 
-STDMETHODIMP CRenderedTextSubtitle::Render(SubPicDesc& spd, REFERENCE_TIME rt, double fps, RECT& bbox)
+STDMETHODIMP CRenderedTextSubtitle::Render(SubPicDesc& spd, REFERENCE_TIME rt, RECT& bbox)
 {
     CRect bbox2(0, 0, 0, 0);
 
@@ -3360,7 +3360,7 @@ STDMETHODIMP CRenderedTextSubtitle::Render(SubPicDesc& spd, REFERENCE_TIME rt, d
 
     int segment;
 //    TRACE(_T("search started: %d"), t);
-    const STSSegment* stss = SearchSubs(t, fps, &segment);
+    const STSSegment* stss = SearchSubs(t, &segment);
 //    TRACE(_T("search complete: %d"), t);
     if(!stss) return S_FALSE;
 
@@ -3405,9 +3405,9 @@ STDMETHODIMP CRenderedTextSubtitle::Render(SubPicDesc& spd, REFERENCE_TIME rt, d
         STSEntry stse = GetAt(entry);
 
         {
-            int start = TranslateStart(entry, fps);
+            int start = TranslateStart(entry);
             m_time = t - start;
-            m_delay = TranslateEnd(entry, fps) - start;
+            m_delay = TranslateEnd(entry) - start;
         }
 
         CSubtitle* s = GetSubtitle(entry);

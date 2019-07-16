@@ -297,7 +297,6 @@ ISubPicQueueImpl::ISubPicQueueImpl(ISubPicAllocator* pAllocator, HRESULT* phr)
     , m_pAllocator(pAllocator)
     , m_rtNow(0)
     , m_rtNowLast(0)
-    , m_fps(25.0)
 {
     if(phr) *phr = S_OK;
 
@@ -351,13 +350,6 @@ STDMETHODIMP ISubPicQueueImpl::GetSubPicProvider(ISubPicProvider** pSubPicProvid
     return !!*pSubPicProvider ? S_OK : E_FAIL;
 }
 
-STDMETHODIMP ISubPicQueueImpl::SetFPS(double fps)
-{
-    m_fps = fps;
-
-    return S_OK;
-}
-
 STDMETHODIMP ISubPicQueueImpl::SetTime(REFERENCE_TIME rtNow)
 {
     m_rtNow = rtNow;
@@ -367,7 +359,7 @@ STDMETHODIMP ISubPicQueueImpl::SetTime(REFERENCE_TIME rtNow)
 
 // private
 
-HRESULT ISubPicQueueImpl::RenderTo(ISubPic* pSubPic, REFERENCE_TIME rtStart, REFERENCE_TIME rtStop, double fps)
+HRESULT ISubPicQueueImpl::RenderTo(ISubPic* pSubPic, REFERENCE_TIME rtStart, REFERENCE_TIME rtStop)
 {
     HRESULT hr = E_FAIL;
 
@@ -386,7 +378,7 @@ HRESULT ISubPicQueueImpl::RenderTo(ISubPic* pSubPic, REFERENCE_TIME rtStart, REF
        && SUCCEEDED(pSubPic->Lock(spd)))
     {
         CRect r(0, 0, 0, 0);
-        hr = pSubPicProvider->Render(spd, ((rtStart + rtStop) / 2), fps, r);
+        hr = pSubPicProvider->Render(spd, ((rtStart + rtStop) / 2), r);
 
         pSubPic->SetStart(rtStart);
         pSubPic->SetStop(rtStop);
@@ -450,30 +442,19 @@ STDMETHODIMP_(bool) CSubPicQueueNoThread::LookupSubPic(REFERENCE_TIME rtNow, CCo
         GetSubPicProvider(&pSubPicProvider); 
  	    if (pSubPicProvider && SUCCEEDED(pSubPicProvider->Lock())) 
         {
-            double fps = m_fps;
-
-            POSITION pos = pSubPicProvider->GetStartPosition(rtNow, fps); 
+            POSITION pos = pSubPicProvider->GetStartPosition(rtNow); 
  	        if(pos != 0) 
             {
-                REFERENCE_TIME rtStart = pSubPicProvider->GetStart(pos, fps);
-                REFERENCE_TIME rtStop = pSubPicProvider->GetStop(pos, fps);
+                SIZE	MaxTextureSize, VirtualSize;
+                POINT	VirtualTopLeft;
+                HRESULT	hr2;
+                if(SUCCEEDED(hr2 = pSubPicProvider->GetTextureSize(pos, MaxTextureSize, VirtualSize, VirtualTopLeft)))
+                    m_pAllocator->SetMaxTextureSize(MaxTextureSize);
 
-                rtStart = rtNow;
-                rtStop = rtNow + 1;
-
-                if(rtStart <= rtNow && rtNow < rtStop)
-                {
-                    SIZE	MaxTextureSize, VirtualSize;
-                    POINT	VirtualTopLeft;
-                    HRESULT	hr2;
-                    if(SUCCEEDED(hr2 = pSubPicProvider->GetTextureSize(pos, MaxTextureSize, VirtualSize, VirtualTopLeft)))
-                        m_pAllocator->SetMaxTextureSize(MaxTextureSize);
-
-                    if(SUCCEEDED(RenderTo(m_pSubPic, rtStart, rtStop, fps)))
-                        ppSubPic = pSubPic;
-                    if(SUCCEEDED(hr2))
-                        pSubPic->SetVirtualTextureSize(VirtualSize, VirtualTopLeft);
-                }
+                if(SUCCEEDED(RenderTo(m_pSubPic, rtNow, rtNow+1)))
+                    ppSubPic = pSubPic;
+                if(SUCCEEDED(hr2))
+                    pSubPic->SetVirtualTextureSize(VirtualSize, VirtualTopLeft);
             }
 
             pSubPicProvider->Unlock();
@@ -490,37 +471,6 @@ STDMETHODIMP_(bool) CSubPicQueueNoThread::LookupSubPic(REFERENCE_TIME rtNow, CCo
     return(!!ppSubPic);
 }
 
-STDMETHODIMP CSubPicQueueNoThread::GetStats(int& nSubPics, REFERENCE_TIME& rtNow, REFERENCE_TIME& rtStart, REFERENCE_TIME& rtStop)
-{
-    CAutoLock cAutoLock(&m_csLock);
-
-    nSubPics = 0;
-    rtNow = m_rtNow;
-    rtStart = rtStop = 0;
-
-    if(m_pSubPic)
-    {
-        nSubPics = 1;
-        rtStart = m_pSubPic->GetStart();
-        rtStop = m_pSubPic->GetStop();
-    }
-
-    return S_OK;
-}
-
-STDMETHODIMP CSubPicQueueNoThread::GetStats(int nSubPic, REFERENCE_TIME& rtStart, REFERENCE_TIME& rtStop)
-{
-    CAutoLock cAutoLock(&m_csLock);
-
-    if(!m_pSubPic || nSubPic != 0)
-        return E_INVALIDARG;
-
-    rtStart = m_pSubPic->GetStart();
-    rtStop = m_pSubPic->GetStop();
-
-    return S_OK;
-}
-
 //
 // ISubPicAllocatorPresenterImpl
 //
@@ -530,7 +480,6 @@ ISubPicAllocatorPresenterImpl::ISubPicAllocatorPresenterImpl(HWND hWnd, HRESULT&
     , m_hWnd(hWnd)
     , m_NativeVideoSize(0, 0), m_AspectRatio(0, 0)
     , m_VideoRect(0, 0, 0, 0), m_WindowRect(0, 0, 0, 0)
-    , m_fps(25.0)
     , m_rtSubtitleDelay(0)
     , m_bDeviceResetRequested(false) 
     , m_bPendingResetDevice(false)
@@ -657,7 +606,7 @@ STDMETHODIMP_(int) ISubPicAllocatorPresenterImpl::GetSubtitleDelay()
 
 STDMETHODIMP_(double) ISubPicAllocatorPresenterImpl::GetFPS()
 {
-    return(m_fps);
+    return(25.0);
 }
 
 STDMETHODIMP_(void) ISubPicAllocatorPresenterImpl::SetSubPicProvider(ISubPicProvider* pSubPicProvider)

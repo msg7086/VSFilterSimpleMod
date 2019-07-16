@@ -45,14 +45,13 @@ private:
     CString m_fn;
 
 protected:
-    float m_fps;
     CCritSec m_csSubLock;
     CComPtr<ISubPicQueue> m_pSubPicQueue;
     CComPtr<ISubPicProvider> m_pSubPicProvider;
     DWORD_PTR m_SubPicProviderId;
 
 public:
-    CFilter() : m_fps(-1), m_SubPicProviderId(0)
+    CFilter() : m_SubPicProviderId(0)
     {
     }
     virtual ~CFilter()
@@ -70,7 +69,7 @@ public:
         m_fn = fn;
     }
 
-    bool Render(SubPicDesc& dst, REFERENCE_TIME rt, float fps)
+    bool Render(SubPicDesc& dst, REFERENCE_TIME rt)
     {
         if(!m_pSubPicProvider)
             return(false);
@@ -119,7 +118,6 @@ public:
     CTextSubFilter(CString fn = _T(""), int CharSet = DEFAULT_CHARSET, float fps = -1)
         : m_CharSet(CharSet)
     {
-        m_fps = fps;
         if(!fn.IsEmpty()) Open(fn, CharSet);
     }
 
@@ -187,7 +185,7 @@ public:
         /*vi.IsIYUV()*/ vi.pixel_type == VideoInfo::CS_IYUV ? (s_fSwapUV ? MSP_YV12 : MSP_IYUV) :
                 -1;
 
-        float fps = m_fps > 0 ? m_fps : (float)vi.fps_numerator / vi.fps_denominator;
+        float fps = (float)vi.fps_numerator / vi.fps_denominator;
 
         REFERENCE_TIME timestamp;
 
@@ -196,7 +194,7 @@ public:
         else
             timestamp = (REFERENCE_TIME)(10000000 * vfr->TimeStampFromFrameNumber(n));
 
-        Render(dst, timestamp, fps);
+        Render(dst, timestamp);
 
         return(frame);
     }
@@ -705,9 +703,9 @@ namespace VapourSynth {
                 else
                     timestamp = static_cast<REFERENCE_TIME>(10000000 * d->vfr->TimeStampFromFrameNumber(n));
 
-                d->textsub->Render(frameBuf->subpic, timestamp, d->fps);
+                d->textsub->Render(frameBuf->subpic, timestamp);
                 if (d->accurate16bit && frameBuf->subpic2.bits)
-                    d->textsub->Render(frameBuf->subpic2, timestamp, d->fps);
+                    d->textsub->Render(frameBuf->subpic2, timestamp);
 
                 frameBuf->WriteTo(dst);
             }

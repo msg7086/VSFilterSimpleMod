@@ -1430,11 +1430,11 @@ bool CSimpleTextSubtitle::GetDefaultStyle(STSStyle& s)
     return true;
 }
 
-int CSimpleTextSubtitle::SearchSub(int t, double fps)
+int CSimpleTextSubtitle::SearchSub(int t)
 {
     int i = 0, j = GetCount() - 1, ret = -1;
 
-    if(j >= 0 && t >= TranslateStart(j, fps))
+    if(j >= 0 && t >= TranslateStart(j))
     {
         return(j);
     }
@@ -1443,11 +1443,11 @@ int CSimpleTextSubtitle::SearchSub(int t, double fps)
     {
         int mid = (i + j) >> 1;
 
-        int midt = TranslateStart(mid, fps);
+        int midt = TranslateStart(mid);
 
         if(t == midt)
         {
-            while(mid > 0 && t == TranslateStart(mid - 1, fps)) mid--;
+            while(mid > 0 && t == TranslateStart(mid - 1)) mid--;
             ret = mid;
             break;
         }
@@ -1468,28 +1468,28 @@ int CSimpleTextSubtitle::SearchSub(int t, double fps)
     return(ret);
 }
 
-const STSSegment* CSimpleTextSubtitle::SearchSubs(int t, double fps, /*[out]*/ int* iSegment, int* nSegments)
+const STSSegment* CSimpleTextSubtitle::SearchSubs(int t, /*[out]*/ int* iSegment, int* nSegments)
 {
     int i = 0, j = m_segments.GetCount() - 1, ret = -1;
 
     if(nSegments) *nSegments = j + 1;
 
     // last segment
-    if(j >= 0 && t >= TranslateSegmentStart(j, fps) && t < TranslateSegmentEnd(j, fps))
+    if(j >= 0 && t >= TranslateSegmentStart(j) && t < TranslateSegmentEnd(j))
     {
         if(iSegment) *iSegment = j;
         return(&m_segments[j]);
     }
 
     // after last segment
-    if(j >= 0 && t >= TranslateSegmentEnd(j, fps))
+    if(j >= 0 && t >= TranslateSegmentEnd(j))
     {
         if(iSegment) *iSegment = j + 1;
         return(NULL);
     }
 
     // before first segment
-    if(j > 0 && t < TranslateSegmentStart(i, fps))
+    if(j > 0 && t < TranslateSegmentStart(i))
     {
         if(iSegment) *iSegment = -1;
         return(NULL);
@@ -1516,7 +1516,7 @@ const STSSegment* CSimpleTextSubtitle::SearchSubs(int t, double fps, /*[out]*/ i
     {
         int mid = (i + j) >> 1;
 
-        int midt = TranslateSegmentStart(mid, fps);
+        int midt = TranslateSegmentStart(mid);
 
         if(t == midt)
         {
@@ -1544,7 +1544,7 @@ const STSSegment* CSimpleTextSubtitle::SearchSubs(int t, double fps, /*[out]*/ i
 
     if(0 <= ret && ret < m_segments.GetCount()
        && m_segments[ret].subs.GetCount() > 0
-       && TranslateSegmentStart(ret, fps) <= t && t < TranslateSegmentEnd(ret, fps))
+       && TranslateSegmentStart(ret) <= t && t < TranslateSegmentEnd(ret))
     {
         return(&m_segments[ret]);
     }
@@ -1552,22 +1552,22 @@ const STSSegment* CSimpleTextSubtitle::SearchSubs(int t, double fps, /*[out]*/ i
     return(NULL);
 }
 
-int CSimpleTextSubtitle::TranslateStart(int i, double fps)
+int CSimpleTextSubtitle::TranslateStart(int i)
 {
     return(i < 0 || GetCount() <= i ? -1 : GetAt(i).start);
 }
 
-int CSimpleTextSubtitle::TranslateEnd(int i, double fps)
+int CSimpleTextSubtitle::TranslateEnd(int i)
 {
     return(i < 0 || GetCount() <= i ? -1 : GetAt(i).end);
 }
 
-int CSimpleTextSubtitle::TranslateSegmentStart(int i, double fps)
+int CSimpleTextSubtitle::TranslateSegmentStart(int i)
 {
     return(i < 0 || m_segments.GetCount() <= i ? -1 : m_segments[i].start);
 }
 
-int CSimpleTextSubtitle::TranslateSegmentEnd(int i, double fps)
+int CSimpleTextSubtitle::TranslateSegmentEnd(int i)
 {
     return(i < 0 || m_segments.GetCount() <= i ? -1 : m_segments[i].end);
 }

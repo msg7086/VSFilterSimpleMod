@@ -320,13 +320,13 @@ public:
     bool SetDefaultStyle(STSStyle& s);
     bool GetDefaultStyle(STSStyle& s);
 
-    int TranslateStart(int i, double fps);
-    int TranslateEnd(int i, double fps);
-    int SearchSub(int t, double fps);
+    int TranslateStart(int i);
+    int TranslateEnd(int i);
+    int SearchSub(int t);
 
-    int TranslateSegmentStart(int i, double fps);
-    int TranslateSegmentEnd(int i, double fps);
-    const STSSegment* SearchSubs(int t, double fps, /*[out]*/ int* iSegment = NULL, int* nSegments = NULL);
+    int TranslateSegmentStart(int i);
+    int TranslateSegmentEnd(int i);
+    const STSSegment* SearchSubs(int t, /*[out]*/ int* iSegment = NULL, int* nSegments = NULL);
     const STSSegment* GetSegment(int iSegment)
     {
         return iSegment >= 0 && iSegment < (int)m_segments.GetCount() ? &m_segments[iSegment] : NULL;

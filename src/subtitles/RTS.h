@@ -272,11 +272,11 @@ public:
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv);
 
     // ISubPicProvider
-    STDMETHODIMP_(POSITION) GetStartPosition(REFERENCE_TIME rt, double fps);
+    STDMETHODIMP_(POSITION) GetStartPosition(REFERENCE_TIME rt);
     STDMETHODIMP_(POSITION) GetNext(POSITION pos);
-    STDMETHODIMP_(REFERENCE_TIME) GetStart(POSITION pos, double fps);
-    STDMETHODIMP_(REFERENCE_TIME) GetStop(POSITION pos, double fps);
-    STDMETHODIMP Render(SubPicDesc& spd, REFERENCE_TIME rt, double fps, RECT& bbox);
+    STDMETHODIMP_(REFERENCE_TIME) GetStart(POSITION pos);
+    STDMETHODIMP_(REFERENCE_TIME) GetStop(POSITION pos);
+    STDMETHODIMP Render(SubPicDesc& spd, REFERENCE_TIME rt, RECT& bbox);
 
     // IPersist
     STDMETHODIMP GetClassID(CLSID* pClassID);

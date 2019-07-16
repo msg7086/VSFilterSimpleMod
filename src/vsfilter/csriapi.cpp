@@ -139,7 +139,6 @@ CSRIAPI int csri_request_fmt(csri_inst *inst, const struct csri_fmt *fmt)
 
 CSRIAPI void csri_render(csri_inst *inst, struct csri_frame *frame, double time)
 {
-    const double arbitrary_framerate = 25.0;
     SubPicDesc spd;
     spd.w = inst->screen_res.cx;
     spd.h = inst->screen_res.cy;
@@ -182,7 +181,7 @@ CSRIAPI void csri_render(csri_inst *inst, struct csri_frame *frame, double time)
     }
     spd.vidrect = inst->video_rect;
 
-    inst->rts->Render(spd, (REFERENCE_TIME)(time * 10000000), arbitrary_framerate, inst->video_rect);
+    inst->rts->Render(spd, (REFERENCE_TIME)(time * 10000000), inst->video_rect);
 }
 
 

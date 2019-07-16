@@ -210,13 +210,13 @@ interface ISubPicProvider : public IUnknown
 	STDMETHOD (Lock) () PURE;
 	STDMETHOD (Unlock) () PURE;
 
-	STDMETHOD_(POSITION, GetStartPosition) (REFERENCE_TIME rt, double fps) PURE;
+	STDMETHOD_(POSITION, GetStartPosition) (REFERENCE_TIME rt) PURE;
 	STDMETHOD_(POSITION, GetNext) (POSITION pos) PURE;
 
-	STDMETHOD_(REFERENCE_TIME, GetStart) (POSITION pos, double fps) PURE;
-	STDMETHOD_(REFERENCE_TIME, GetStop) (POSITION pos, double fps) PURE;
+	STDMETHOD_(REFERENCE_TIME, GetStart) (POSITION pos) PURE;
+	STDMETHOD_(REFERENCE_TIME, GetStop) (POSITION pos) PURE;
 
-	STDMETHOD (Render) (SubPicDesc& spd, REFERENCE_TIME rt, double fps, RECT& bbox) PURE;
+	STDMETHOD (Render) (SubPicDesc& spd, REFERENCE_TIME rt, RECT& bbox) PURE;
 	STDMETHOD (GetTextureSize) (POSITION pos, SIZE& MaxTextureSize, SIZE& VirtualSize, POINT& VirtualTopLeft) PURE;
 };
 
@@ -237,13 +237,13 @@ public:
 	STDMETHODIMP Lock();
 	STDMETHODIMP Unlock();
 
-	STDMETHODIMP_(POSITION) GetStartPosition(REFERENCE_TIME rt, double fps) = 0;
+	STDMETHODIMP_(POSITION) GetStartPosition(REFERENCE_TIME rt) = 0;
 	STDMETHODIMP_(POSITION) GetNext(POSITION pos) = 0;
 
-	STDMETHODIMP_(REFERENCE_TIME) GetStart(POSITION pos, double fps) = 0;
-	STDMETHODIMP_(REFERENCE_TIME) GetStop(POSITION pos, double fps) = 0;
+	STDMETHODIMP_(REFERENCE_TIME) GetStart(POSITION pos) = 0;
+	STDMETHODIMP_(REFERENCE_TIME) GetStop(POSITION pos) = 0;
 
-	STDMETHODIMP Render(SubPicDesc& spd, REFERENCE_TIME rt, double fps, RECT& bbox) = 0;
+	STDMETHODIMP Render(SubPicDesc& spd, REFERENCE_TIME rt, RECT& bbox) = 0;
 	STDMETHODIMP GetTextureSize (POSITION pos, SIZE& MaxTextureSize, SIZE& VirtualSize, POINT& VirtualTopLeft) { return E_NOTIMPL; };
 };
 
@@ -257,14 +257,10 @@ interface ISubPicQueue : public IUnknown
 	STDMETHOD (SetSubPicProvider) (ISubPicProvider* pSubPicProvider /*[in]*/) PURE;
 	STDMETHOD (GetSubPicProvider) (ISubPicProvider** pSubPicProvider /*[out]*/) PURE;
 
-	STDMETHOD (SetFPS) (double fps /*[in]*/) PURE;
 	STDMETHOD (SetTime) (REFERENCE_TIME rtNow /*[in]*/) PURE;
 
 	STDMETHOD (Invalidate) (REFERENCE_TIME rtInvalidate = -1) PURE;
 	STDMETHOD_(bool, LookupSubPic) (REFERENCE_TIME rtNow /*[in]*/, CComPtr<ISubPic> &pSubPic /*[out]*/) PURE;
-
-	STDMETHOD (GetStats) (int& nSubPics, REFERENCE_TIME& rtNow, REFERENCE_TIME& rtStart, REFERENCE_TIME& rtStop /*[out]*/) PURE;
-	STDMETHOD (GetStats) (int nSubPic /*[in]*/, REFERENCE_TIME& rtStart, REFERENCE_TIME& rtStop /*[out]*/) PURE;
 };
 
 class ISubPicQueueImpl : public CUnknown, public ISubPicQueue
@@ -273,13 +269,12 @@ class ISubPicQueueImpl : public CUnknown, public ISubPicQueue
 	CComPtr<ISubPicProvider> m_pSubPicProvider;
 
 protected:
-	double m_fps;
 	REFERENCE_TIME m_rtNow;
 	REFERENCE_TIME m_rtNowLast;
 
 	CComPtr<ISubPicAllocator> m_pAllocator;
 
-	HRESULT RenderTo(ISubPic* pSubPic, REFERENCE_TIME rtStart, REFERENCE_TIME rtStop, double fps);
+	HRESULT RenderTo(ISubPic* pSubPic, REFERENCE_TIME rtStart, REFERENCE_TIME rtStop);
 
 public:
 	ISubPicQueueImpl(ISubPicAllocator* pAllocator, HRESULT* phr);
@@ -293,14 +288,10 @@ public:
 	STDMETHODIMP SetSubPicProvider(ISubPicProvider* pSubPicProvider);
 	STDMETHODIMP GetSubPicProvider(ISubPicProvider** pSubPicProvider);
 
-	STDMETHODIMP SetFPS(double fps);
 	STDMETHODIMP SetTime(REFERENCE_TIME rtNow);
 /*
 	STDMETHODIMP Invalidate(REFERENCE_TIME rtInvalidate = -1) = 0;
 	STDMETHODIMP_(bool) LookupSubPic(REFERENCE_TIME rtNow, ISubPic** ppSubPic) = 0;
-
-	STDMETHODIMP GetStats(int& nSubPics, REFERENCE_TIME& rtNow, REFERENCE_TIME& rtStart, REFERENCE_TIME& rtStop) = 0;
-	STDMETHODIMP GetStats(int nSubPics, REFERENCE_TIME& rtStart, REFERENCE_TIME& rtStop) = 0;
 */
 };
 
@@ -317,9 +308,6 @@ public:
 
 	STDMETHODIMP Invalidate(REFERENCE_TIME rtInvalidate = -1);
 	STDMETHODIMP_(bool) LookupSubPic(REFERENCE_TIME rtNow, CComPtr<ISubPic> &pSubPic);
-
-	STDMETHODIMP GetStats(int& nSubPics, REFERENCE_TIME& rtNow, REFERENCE_TIME& rtStart, REFERENCE_TIME& rtStop);
-	STDMETHODIMP GetStats(int nSubPic, REFERENCE_TIME& rtStart, REFERENCE_TIME& rtStop);
 };
 
 //
@@ -373,7 +361,6 @@ protected:
 	CRect m_VideoRect, m_WindowRect;
 
 	REFERENCE_TIME m_rtNow;
-	double m_fps;
 
 	CComPtr<ISubPicProvider> m_SubPicProvider;
 	CComPtr<ISubPicAllocator> m_pAllocator;
