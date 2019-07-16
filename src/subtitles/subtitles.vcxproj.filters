@@ -14,28 +14,16 @@
     <ClCompile Include="BaseSub.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CCDecoder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CompositionObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DVBSub.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GFN.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HdmvSub.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Rasterizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RealTextParser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderedHdmvSubtitle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RTS.cpp">
@@ -50,22 +38,10 @@
     <ClCompile Include="STS.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SubtitleInputPin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TextFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="USFSubtitles.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VobSubFile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VobSubFileRipper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VobSubImage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -73,28 +49,16 @@
     <ClInclude Include="BaseSub.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CCDecoder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CompositionObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DVBSub.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GFN.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HdmvSub.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Rasterizer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RealTextParser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderedHdmvSubtitle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RTS.h">
@@ -112,22 +76,10 @@
     <ClInclude Include="STS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SubtitleInputPin.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TextFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="USFSubtitles.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VobSubFile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VobSubFileRipper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VobSubImage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

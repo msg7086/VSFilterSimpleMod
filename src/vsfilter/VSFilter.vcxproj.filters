@@ -15,19 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Copy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="csriapi.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectVobSub.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectVobSubFilter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectVobSubPropPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="plugins.cpp">
@@ -36,45 +24,12 @@
     <ClCompile Include="StdAfx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StyleEditorDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="systray.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TextInputPin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="vfr.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VSFilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="csri.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectVobSub.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectVobSubFilter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectVobSubPropPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IDirectVobSub.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StyleEditorDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="systray.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TextInputPin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="vfr.h">
@@ -94,12 +49,6 @@
     <None Include="res\Icon_147.ico">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="VSFilter64.def">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="VSFilterMod64.def">
-      <Filter>Source Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="VSFilter.rc">
@@ -108,13 +57,5 @@
     <ResourceCompile Include="VSFilterMod.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <CustomBuildStep Include="VSFilter.def">
-      <Filter>Source Files</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="VSFilterMod.def">
-      <Filter>Source Files</Filter>
-    </CustomBuildStep>
   </ItemGroup>
 </Project>

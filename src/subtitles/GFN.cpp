@@ -26,26 +26,18 @@
 
 TCHAR* exttypestr[] =
 {
-    _T("srt"), _T("sub"), _T("smi"), _T("psb"),
-    _T("ssa"), _T("ass"), _T("idx"), _T("usf"),
-    _T("xss"), _T("txt"), _T("ssf"), _T("rt")
+    _T("srt"), _T("ssa"), _T("ass")
 };
 
 static TCHAR* ext[2][countof(exttypestr)] =
 {
     {
-        _T(".srt"), _T(".sub"), _T(".smi"), _T(".psb"),
-        _T(".ssa"), _T(".ass"), _T(".idx"), _T(".usf"),
-        _T(".xss"), _T(".txt"), _T(".ssf"), _T(".rt")
+        _T(".srt"), _T(".ssa"), _T(".ass")
     },
     {
-        _T(".*.srt"), _T(".*.sub"), _T(".*.smi"), _T(".*.psb"),
-        _T(".*.ssa"), _T(".*.ass"), _T(".*.dummyidx"), _T(".*.usf"),
-        _T(".*.xss"), _T(".*.txt"), _T(".*.ssf"), _T(".*.rt")
+        _T(".*.srt"), _T(".*.ssa"), _T(".*.ass")
     },
 };
-
-#define WEBSUBEXT _T(".wse")
 
 static int SubFileCompare(const void* elem1, const void* elem2)
 {
@@ -153,20 +145,6 @@ void GetSubFileNames(CString fn, CAtlArray<CString>& paths, CAtlArray<SubFile>& 
                         FindClose(hFile);
                     }
                 }
-            }
-        }
-    }
-    else if(l > 7)
-    {
-        CWebTextFile wtf; // :)
-        if(wtf.Open(orgpath + title + WEBSUBEXT))
-        {
-            CString fn;
-            while(wtf.ReadString(fn) && fn.Find(_T("://")) >= 0)
-            {
-                SubFile f;
-                f.fn = fn;
-                ret.Add(f);
             }
         }
     }

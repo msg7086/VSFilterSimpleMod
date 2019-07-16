@@ -23,7 +23,6 @@
 #include <afxdlgs.h>
 #include <atlpath.h>
 #include "resource.h"
-#include "..\subtitles\VobSubFile.h"
 #include "..\subtitles\RTS.h"
 #include "..\subtitles\SSF.h"
 #include "..\SubPic\MemSubPic.h"
