@@ -153,7 +153,6 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="GFN.cpp" />
     <ClCompile Include="Rasterizer.cpp">
       <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Release (MOD)|Win32'">AssemblyAndSourceCode</AssemblerOutput>
       <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Debug (MOD)|Win32'">AssemblyAndSourceCode</AssemblerOutput>
@@ -173,7 +172,6 @@
     <ClCompile Include="USFSubtitles.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GFN.h" />
     <ClInclude Include="Rasterizer.h" />
     <ClInclude Include="RealTextParser.h" />
     <ClInclude Include="RTS.h" />
