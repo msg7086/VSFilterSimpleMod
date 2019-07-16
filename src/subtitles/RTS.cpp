@@ -3299,7 +3299,6 @@ STDMETHODIMP CRenderedTextSubtitle::NonDelegatingQueryInterface(REFIID riid, voi
 
     return
         QI(IPersist)
-        QI(ISubStream)
         QI(ISubPicProvider)
         __super::NonDelegatingQueryInterface(riid, ppv);
 }
