@@ -41,7 +41,6 @@ public:
 
     // ISubPic
     STDMETHODIMP GetDesc(SubPicDesc& spd);
-    STDMETHODIMP CopyTo(ISubPic* pSubPic);
     STDMETHODIMP ClearDirtyRect(DWORD color);
     STDMETHODIMP Lock(SubPicDesc& spd);
     STDMETHODIMP Unlock(RECT* pDirtyRect);

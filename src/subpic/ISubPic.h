@@ -54,7 +54,6 @@ interface ISubPic : public IUnknown
 	STDMETHOD_(void, SetStop) (REFERENCE_TIME rtStop) PURE;
 
 	STDMETHOD (GetDesc) (SubPicDesc& spd /*[out]*/) PURE;
-	STDMETHOD (CopyTo) (ISubPic* pSubPic /*[in]*/) PURE;
 
 	STDMETHOD (ClearDirtyRect) (DWORD color /*[in]*/) PURE;
 	STDMETHOD (GetDirtyRect) (RECT* pDirtyRect /*[out]*/) PURE;
@@ -132,7 +131,6 @@ public:
 	STDMETHODIMP_(void) SetStop(REFERENCE_TIME rtStop);
 
 	STDMETHODIMP GetDesc(SubPicDesc& spd) = 0;
-	STDMETHODIMP CopyTo(ISubPic* pSubPic);
 
 	STDMETHODIMP ClearDirtyRect(DWORD color) = 0;
 	STDMETHODIMP GetDirtyRect(RECT* pDirtyRect);

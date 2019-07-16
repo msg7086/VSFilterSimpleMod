@@ -126,27 +126,6 @@ STDMETHODIMP CMemSubPic::GetDesc(SubPicDesc& spd)
     return S_OK;
 }
 
-STDMETHODIMP CMemSubPic::CopyTo(ISubPic* pSubPic)
-{
-    HRESULT hr;
-    if(FAILED(hr = __super::CopyTo(pSubPic)))
-        return hr;
-
-    SubPicDesc src, dst;
-    if(FAILED(GetDesc(src)) || FAILED(pSubPic->GetDesc(dst)))
-        return E_FAIL;
-
-    int w = m_rcDirty.Width(), h = m_rcDirty.Height();
-
-    BYTE* s = (BYTE*)src.bits + src.pitch * m_rcDirty.top + m_rcDirty.left * 4;
-    BYTE* d = (BYTE*)dst.bits + dst.pitch * m_rcDirty.top + m_rcDirty.left * 4;
-
-    for(ptrdiff_t j = 0; j < h; j++, s += src.pitch, d += dst.pitch)
-        memcpy(d, s, w * 4);
-
-    return S_OK;
-}
-
 STDMETHODIMP CMemSubPic::ClearDirtyRect(DWORD color)
 {
     if(m_rcDirty.IsRectEmpty())

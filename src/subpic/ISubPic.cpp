@@ -91,22 +91,6 @@ STDMETHODIMP_(void) ISubPicImpl::SetStop(REFERENCE_TIME rtStop)
     m_rtStop = rtStop;
 }
 
-STDMETHODIMP ISubPicImpl::CopyTo(ISubPic* pSubPic)
-{
-    if(!pSubPic)
-        return E_POINTER;
-
-    pSubPic->SetStart(m_rtStart);
-    pSubPic->SetStop(m_rtStop);
-    pSubPic->SetSegmentStart(m_rtSegmentStart);
-    pSubPic->SetSegmentStop(m_rtSegmentStop);
-    pSubPic->SetDirtyRect(m_rcDirty);
-    pSubPic->SetSize(m_size, m_vidrect);
-    pSubPic->SetVirtualTextureSize(m_VirtualTextureSize, m_VirtualTextureTopLeft);
-
-    return S_OK;
-}
-
 STDMETHODIMP ISubPicImpl::GetDirtyRect(RECT* pDirtyRect)
 {
     return pDirtyRect ? *pDirtyRect = m_rcDirty, S_OK : E_POINTER;
