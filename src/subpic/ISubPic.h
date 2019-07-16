@@ -57,7 +57,6 @@ interface ISubPic : public IUnknown
 
 	STDMETHOD (ClearDirtyRect) (DWORD color /*[in]*/) PURE;
 	STDMETHOD (GetDirtyRect) (RECT* pDirtyRect /*[out]*/) PURE;
-	STDMETHOD (SetDirtyRect) (RECT* pDirtyRect /*[in]*/) PURE;
 
 	STDMETHOD (GetMaxSize) (SIZE* pMaxSize /*[out]*/) PURE;
 	STDMETHOD (SetSize) (SIZE pSize /*[in]*/, RECT vidrect /*[in]*/) PURE;
@@ -134,7 +133,6 @@ public:
 
 	STDMETHODIMP ClearDirtyRect(DWORD color) = 0;
 	STDMETHODIMP GetDirtyRect(RECT* pDirtyRect);
-	STDMETHODIMP SetDirtyRect(RECT* pDirtyRect);
 
 	STDMETHODIMP GetMaxSize(SIZE* pMaxSize);
 	STDMETHODIMP SetSize(SIZE size, RECT vidrect);

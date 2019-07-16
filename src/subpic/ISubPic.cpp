@@ -122,11 +122,6 @@ STDMETHODIMP ISubPicImpl::GetSourceAndDest(SIZE* pSize, RECT* pRcSource, RECT* p
         return E_INVALIDARG;
 }
 
-STDMETHODIMP ISubPicImpl::SetDirtyRect(RECT* pDirtyRect)
-{
-    return pDirtyRect ? m_rcDirty = *pDirtyRect, S_OK : E_POINTER;
-}
-
 STDMETHODIMP ISubPicImpl::GetMaxSize(SIZE* pMaxSize)
 {
     return pMaxSize ? *pMaxSize = m_maxsize, S_OK : E_POINTER;
