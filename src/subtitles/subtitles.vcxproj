@@ -153,8 +153,6 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BaseSub.cpp" />
-    <ClCompile Include="CompositionObject.cpp" />
     <ClCompile Include="GFN.cpp" />
     <ClCompile Include="Rasterizer.cpp">
       <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Release (MOD)|Win32'">AssemblyAndSourceCode</AssemblerOutput>
@@ -164,12 +162,6 @@
     </ClCompile>
     <ClCompile Include="RealTextParser.cpp" />
     <ClCompile Include="RTS.cpp" />
-    <ClCompile Include="SSF.cpp">
-      <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Release (MOD)|Win32'">AssemblyAndSourceCode</AssemblerOutput>
-      <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Debug (MOD)|Win32'">AssemblyAndSourceCode</AssemblerOutput>
-      <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Release (MOD)|x64'">AssemblyAndSourceCode</AssemblerOutput>
-      <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Debug (MOD)|x64'">AssemblyAndSourceCode</AssemblerOutput>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release (MOD)|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug (MOD)|Win32'">Create</PrecompiledHeader>
@@ -181,14 +173,11 @@
     <ClCompile Include="USFSubtitles.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BaseSub.h" />
-    <ClInclude Include="CompositionObject.h" />
     <ClInclude Include="GFN.h" />
     <ClInclude Include="Rasterizer.h" />
     <ClInclude Include="RealTextParser.h" />
     <ClInclude Include="RTS.h" />
     <ClInclude Include="SeparableFilter.h" />
-    <ClInclude Include="SSF.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="STS.h" />
     <ClInclude Include="TextFile.h" />

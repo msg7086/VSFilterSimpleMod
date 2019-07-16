@@ -27,7 +27,6 @@
 #include <atlconv.h>
 #include "resource.h"
 #include "..\subtitles\RTS.h"
-#include "..\subtitles\SSF.h"
 #include "..\SubPic\MemSubPic.h"
 #include "vfr.h"
 
@@ -207,16 +206,6 @@ public:
     {
         SetFileName(_T(""));
         m_pSubPicProvider = NULL;
-
-        if(!m_pSubPicProvider)
-        {
-            if(ssf::CRenderer* ssf = new ssf::CRenderer(&m_csSubLock))
-            {
-                m_pSubPicProvider = (ISubPicProvider*)ssf;
-                if(ssf->Open(CString(fn))) SetFileName(fn);
-                else m_pSubPicProvider = NULL;
-            }
-        }
 
         if(!m_pSubPicProvider)
         {
