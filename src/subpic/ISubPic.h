@@ -310,38 +310,3 @@ public:
 	STDMETHODIMP_(bool) LookupSubPic(REFERENCE_TIME rtNow, CComPtr<ISubPic> &pSubPic);
 };
 
-//
-// ISubPicAllocatorPresenter
-//
-
-[uuid("CF75B1F0-535C-4074-8869-B15F177F944E")]
-interface ISubPicAllocatorPresenter : public IUnknown
-{
-	STDMETHOD (CreateRenderer) (IUnknown** ppRenderer) PURE;
-
-	STDMETHOD_(SIZE, GetVideoSize) (bool fCorrectAR = true) PURE;
-	STDMETHOD_(void, SetPosition) (RECT w, RECT v) PURE;
-	STDMETHOD_(bool, Paint) (bool fAll) PURE;
-
-	STDMETHOD_(void, SetTime) (REFERENCE_TIME rtNow) PURE;
-	STDMETHOD_(void, SetSubtitleDelay) (int delay_ms) PURE;
-	STDMETHOD_(int, GetSubtitleDelay) () PURE;
-	STDMETHOD_(double, GetFPS) () PURE;
-
-	STDMETHOD_(void, SetSubPicProvider) (ISubPicProvider* pSubPicProvider) PURE;
-	STDMETHOD_(void, Invalidate) (REFERENCE_TIME rtInvalidate = -1) PURE;
-
-	STDMETHOD (GetDIB) (BYTE* lpDib, DWORD* size) PURE;
-
-	STDMETHOD (SetVideoAngle) (Vector v, bool fRepaint = true) PURE;
-	STDMETHOD (SetPixelShader) (LPCSTR pSrcData, LPCSTR pTarget) PURE;
-
-	STDMETHOD_(bool, ResetDevice) () PURE;
-};
-
-[uuid("767AEBA8-A084-488a-89C8-F6B74E53A90F")]
-interface ISubPicAllocatorPresenter2 : public ISubPicAllocatorPresenter
-{
-	STDMETHOD (SetPixelShader2) (LPCSTR pSrcData, LPCSTR pTarget, bool bScreenSpace) PURE;
-	STDMETHOD_(SIZE, GetVisibleVideoSize) () PURE;
-};

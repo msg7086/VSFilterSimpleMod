@@ -14,9 +14,6 @@
     <ClCompile Include="Rasterizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RealTextParser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="RTS.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -35,9 +32,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Rasterizer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RealTextParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RTS.h">

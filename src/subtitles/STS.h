@@ -23,6 +23,7 @@
 
 #include <atlcoll.h>
 #include <wxutil.h>
+#include <vector>
 #include "TextFile.h"
 
 #ifdef _VSMOD // patch m003. random text points

@@ -25,7 +25,6 @@
 #include <atlconv.h>
 #include <atlstr.h>
 
-#include "RealTextParser.h"
 #include <fstream>
 
 static long revcolor(long c)
@@ -1082,8 +1081,6 @@ static bool OpenSubStationAlpha(CTextFile* file, CSimpleTextSubtitle& ret, int C
 }
 
 typedef bool (*STSOpenFunct)(CTextFile* file, CSimpleTextSubtitle& ret, int CharSet);
-
-static bool OpenRealText(CTextFile* file, CSimpleTextSubtitle& ret, int CharSet);
 
 typedef struct
 {
@@ -2174,42 +2171,6 @@ STSStyle& operator <<= (STSStyle& s, CString& style)
     }
 
     return(s);
-}
-
-static bool OpenRealText(CTextFile* file, CSimpleTextSubtitle& ret, int CharSet)
-{
-    wstring szFile;
-
-    CStringW buff;
-    while(file->ReadString(buff))
-    {
-        buff.Trim();
-        if(buff.IsEmpty()) continue;
-
-        szFile += CStringW(_T("\n")) + buff.GetBuffer();
-    }
-
-    CRealTextParser RealTextParser;
-    if(!RealTextParser.ParseRealText(szFile))
-        return false;
-
-    CRealTextParser::Subtitles crRealText = RealTextParser.GetParsedSubtitles();
-
-    for(map<pair<int, int>, wstring>::const_iterator i = crRealText.m_mapLines.begin();
-        i != crRealText.m_mapLines.end();
-        ++i)
-    {
-        ret.Add(
-            SubRipper2SSA(i->second.c_str(), CharSet),
-            file->IsUnicode(),
-            i->first.first,
-            i->first.second);
-    }
-
-//	std::wofstream wofsOut(L"c:/zzz.srt");
-//	RealTextParser.OutputSRT(wofsOut);
-
-    return(ret.GetCount() > 0);
 }
 
 #ifdef _VSMOD // patch m003. random text points
