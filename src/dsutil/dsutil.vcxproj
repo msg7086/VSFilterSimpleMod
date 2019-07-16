@@ -190,7 +190,6 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DSMPropertyBag.cpp" />
     <ClCompile Include="DSUtil.cpp" />
     <ClCompile Include="MediaTypes.cpp" />
     <ClCompile Include="stdafx.cpp">
