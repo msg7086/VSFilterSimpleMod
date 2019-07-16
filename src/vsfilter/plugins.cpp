@@ -39,7 +39,7 @@
 namespace Plugin
 {
 
-class CFilter : public CAMThread, public CCritSec
+class CFilter : public CCritSec
 {
 private:
     CString m_fn;
@@ -54,11 +54,9 @@ protected:
 public:
     CFilter() : m_fps(-1), m_SubPicProviderId(0)
     {
-        CAMThread::Create();
     }
     virtual ~CFilter()
     {
-        CAMThread::CallWorker(0);
     }
 
     CString GetFileName()
@@ -110,78 +108,6 @@ public:
         pSubPic->AlphaBlt(r, r, &dst);
 
         return(true);
-    }
-
-    DWORD ThreadProc()
-    {
-        SetThreadPriority(m_hThread, THREAD_PRIORITY_LOWEST);
-
-        CAtlArray<HANDLE> handles;
-        handles.Add(GetRequestHandle());
-
-        CString fn = GetFileName();
-        CFileStatus fs;
-        fs.m_mtime = 0;
-        CFileGetStatus(fn, fs);
-
-        while(1)
-        {
-            DWORD i = WaitForMultipleObjects(handles.GetCount(), handles.GetData(), FALSE, 1000);
-
-            if(WAIT_OBJECT_0 == i)
-            {
-                Reply(S_OK);
-                break;
-            }
-            else if(WAIT_OBJECT_0 + 1 >= i && i <= WAIT_OBJECT_0 + handles.GetCount())
-            {
-                if(FindNextChangeNotification(handles[i - WAIT_OBJECT_0]))
-                {
-                    CFileStatus fs2;
-                    fs2.m_mtime = 0;
-                    CFileGetStatus(fn, fs2);
-
-                    if(fs.m_mtime < fs2.m_mtime)
-                    {
-                        fs.m_mtime = fs2.m_mtime;
-
-                        if(CComQIPtr<ISubStream> pSubStream = m_pSubPicProvider)
-                        {
-                            CAutoLock cAutoLock(&m_csSubLock);
-                            pSubStream->Reload();
-                        }
-                    }
-                }
-            }
-            else if(WAIT_TIMEOUT == i)
-            {
-                CString fn2 = GetFileName();
-
-                if(fn != fn2)
-                {
-                    CPath p(fn2);
-                    p.RemoveFileSpec();
-                    HANDLE h = FindFirstChangeNotification(p, FALSE, FILE_NOTIFY_CHANGE_LAST_WRITE);
-                    if(h != INVALID_HANDLE_VALUE)
-                    {
-                        fn = fn2;
-                        handles.SetCount(1);
-                        handles.Add(h);
-                    }
-                }
-            }
-            else // if(WAIT_ABANDONED_0 == i || WAIT_FAILED == i)
-            {
-                break;
-            }
-        }
-
-        m_hThread = 0;
-
-        for(ptrdiff_t i = 1; i < handles.GetCount(); i++)
-            FindCloseChangeNotification(handles[i]);
-
-        return 0;
     }
 };
 
