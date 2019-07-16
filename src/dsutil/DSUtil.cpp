@@ -38,20 +38,8 @@ DEFINE_GUID(CLSID_ReClock,
 
 void memsetd(void* dst, unsigned int c, int nbytes)
 {
-#ifdef _WIN64
     for(int i = 0; i < nbytes / sizeof(DWORD); i++)
         ((DWORD*)dst)[i] = c;
-#else
-    __asm
-    {
-        mov eax, c
-        mov ecx, nbytes
-        shr ecx, 2
-        mov edi, dst
-        cld
-        rep stosd
-    }
-#endif
 }
 
 typedef struct
@@ -62,24 +50,6 @@ typedef struct
 } ExternalObject;
 
 static CAtlList<ExternalObject> s_extobjs;
-
-CStringW UTF8To16(LPCSTR utf8)
-{
-    CStringW str;
-    int n = MultiByteToWideChar(CP_UTF8, 0, utf8, -1, NULL, 0) - 1;
-    if(n < 0) return str;
-    str.ReleaseBuffer(MultiByteToWideChar(CP_UTF8, 0, utf8, -1, str.GetBuffer(n), n + 1) - 1);
-    return str;
-}
-
-CStringA UTF16To8(LPCWSTR utf16)
-{
-    CStringA str;
-    int n = WideCharToMultiByte(CP_UTF8, 0, utf16, -1, NULL, 0, NULL, NULL) - 1;
-    if(n < 0) return str;
-    str.ReleaseBuffer(WideCharToMultiByte(CP_UTF8, 0, utf16, -1, str.GetBuffer(n), n + 1, NULL, NULL) - 1);
-    return str;
-}
 
 static struct
 {
@@ -618,42 +588,6 @@ static struct
     {"No subtitles", "---", "", LCID_NOSUBTITLES},
 };
 
-CString ISO6391ToLanguage(LPCSTR code)
-{
-    CHAR tmp[2+1];
-    strncpy_s(tmp, code, 2);
-    tmp[2] = 0;
-    _strlwr_s(tmp);
-    for(ptrdiff_t i = 0, j = countof(s_isolangs); i < j; i++)
-        if(!strcmp(s_isolangs[i].iso6391, tmp))
-        {
-            CString ret = CString(CStringA(s_isolangs[i].name));
-            int i = ret.Find(';');
-            if(i > 0) ret = ret.Left(i);
-            return ret;
-        }
-    return(_T(""));
-}
-
-CString ISO6392ToLanguage(LPCSTR code)
-{
-    CHAR tmp[3+1];
-    strncpy_s(tmp, code, 3);
-    tmp[3] = 0;
-    _strlwr_s(tmp);
-    for(ptrdiff_t i = 0, j = countof(s_isolangs); i < j; i++)
-    {
-        if(!strcmp(s_isolangs[i].iso6392, tmp))
-        {
-            CString ret = CString(CStringA(s_isolangs[i].name));
-            int i = ret.Find(';');
-            if(i > 0) ret = ret.Left(i);
-            return ret;
-        }
-    }
-    return _T("");
-}
-
 LCID ISO6391ToLcid(LPCSTR code)
 {
     CHAR tmp[3+1];
@@ -707,24 +641,6 @@ CString ISO6392To6391(LPCSTR code)
     for(ptrdiff_t i = 0, j = countof(s_isolangs); i < j; i++)
         if(!strcmp(s_isolangs[i].iso6392, tmp))
             return CString(CStringA(s_isolangs[i].iso6391));
-    return _T("");
-}
-
-CString LanguageToISO6392(LPCTSTR lang)
-{
-    CString str = lang;
-    str.MakeLower();
-    for(ptrdiff_t i = 0, j = countof(s_isolangs); i < j; i++)
-    {
-        CAtlList<CString> sl;
-        Explode(CString(s_isolangs[i].name), sl, ';');
-        POSITION pos = sl.GetHeadPosition();
-        while(pos)
-        {
-            if(!str.CompareNoCase(sl.GetNext(pos)))
-                return CString(s_isolangs[i].iso6392);
-        }
-    }
     return _T("");
 }
 

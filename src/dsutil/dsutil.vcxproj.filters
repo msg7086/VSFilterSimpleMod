@@ -14,9 +14,6 @@
     <ClCompile Include="DSUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MediaTypes.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -26,9 +23,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DSUtil.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MediaTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SharedInclude.h">
