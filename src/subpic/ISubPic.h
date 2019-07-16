@@ -311,45 +311,6 @@ public:
 */
 };
 
-class CSubPicQueue : public ISubPicQueueImpl, private CAMThread
-{
-	int m_nMaxSubPic;
-	BOOL m_bDisableAnim;
-
-	CInterfaceList<ISubPic> m_Queue;
-
-	CCritSec m_csQueueLock; // for protecting CInterfaceList<ISubPic>
-	REFERENCE_TIME UpdateQueue();
-	void AppendQueue(ISubPic* pSubPic);
-	int GetQueueCount();
-
-	REFERENCE_TIME m_rtQueueMin;
-	REFERENCE_TIME m_rtQueueMax;
-	REFERENCE_TIME m_rtInvalidate;
-
-	// CAMThread
-
-	bool m_fBreakBuffering;
-	enum {EVENT_EXIT, EVENT_TIME, EVENT_COUNT}; // IMPORTANT: _EXIT must come before _TIME if we want to exit fast from the destructor
-	HANDLE m_ThreadEvents[EVENT_COUNT];
-    DWORD ThreadProc();
-
-public:
-	CSubPicQueue(int nMaxSubPic, BOOL bDisableAnim, ISubPicAllocator* pAllocator, HRESULT* phr);
-	virtual ~CSubPicQueue();
-
-	// ISubPicQueue
-
-	STDMETHODIMP SetFPS(double fps);
-	STDMETHODIMP SetTime(REFERENCE_TIME rtNow);
-
-	STDMETHODIMP Invalidate(REFERENCE_TIME rtInvalidate = -1);
-	STDMETHODIMP_(bool) LookupSubPic(REFERENCE_TIME rtNow, CComPtr<ISubPic> &pSubPic);
-
-	STDMETHODIMP GetStats(int& nSubPics, REFERENCE_TIME& rtNow, REFERENCE_TIME& rtStart, REFERENCE_TIME& rtStop);
-	STDMETHODIMP GetStats(int nSubPic, REFERENCE_TIME& rtStart, REFERENCE_TIME& rtStop);
-};
-
 class CSubPicQueueNoThread : public ISubPicQueueImpl
 {
 	CCritSec m_csLock;
