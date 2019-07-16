@@ -3337,11 +3337,6 @@ STDMETHODIMP_(REFERENCE_TIME) CRenderedTextSubtitle::GetStop(POSITION pos, doubl
     return(10000i64 * TranslateSegmentEnd((int)pos - 1, fps));
 }
 
-STDMETHODIMP_(bool) CRenderedTextSubtitle::IsAnimated(POSITION pos)
-{
-    return(true);
-}
-
 struct LSub
 {
     int idx, layer, readorder;

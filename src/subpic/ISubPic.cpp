@@ -720,7 +720,7 @@ DWORD CSubPicQueue::ThreadProc()
                 if(rtNow < rtStop)
                 {
                     REFERENCE_TIME rtCurrent = max(rtNow, rtStart);
-                    bool bIsAnimated = pSubPicProvider->IsAnimated(pos) && !bDisableAnim;
+                    bool bIsAnimated = !bDisableAnim;
                     while(rtCurrent < rtStop)
                     {
 
@@ -894,11 +894,8 @@ STDMETHODIMP_(bool) CSubPicQueueNoThread::LookupSubPic(REFERENCE_TIME rtNow, CCo
                 REFERENCE_TIME rtStart = pSubPicProvider->GetStart(pos, fps);
                 REFERENCE_TIME rtStop = pSubPicProvider->GetStop(pos, fps);
 
-                if(pSubPicProvider->IsAnimated(pos))
-                {
-                    rtStart = rtNow;
-                    rtStop = rtNow + 1;
-                }
+                rtStart = rtNow;
+                rtStop = rtNow + 1;
 
                 if(rtStart <= rtNow && rtNow < rtStop)
                 {

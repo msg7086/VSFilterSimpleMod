@@ -276,7 +276,6 @@ public:
     STDMETHODIMP_(POSITION) GetNext(POSITION pos);
     STDMETHODIMP_(REFERENCE_TIME) GetStart(POSITION pos, double fps);
     STDMETHODIMP_(REFERENCE_TIME) GetStop(POSITION pos, double fps);
-    STDMETHODIMP_(bool) IsAnimated(POSITION pos);
     STDMETHODIMP Render(SubPicDesc& spd, REFERENCE_TIME rt, double fps, RECT& bbox);
 
     // IPersist
