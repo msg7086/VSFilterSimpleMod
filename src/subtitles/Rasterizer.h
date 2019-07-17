@@ -23,9 +23,8 @@
 
 #include <vector>
 #include "SubPic_common.hpp"
-#ifdef _VSMOD // patch m004. gradient colors
+// patch m004. gradient colors
 #include "STS.h"
-#endif
 
 #ifdef _VSMOD // patch m006. moveable vector clip
 class MOD_MOVEVC
