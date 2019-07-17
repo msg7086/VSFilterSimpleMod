@@ -24,7 +24,6 @@
 #include "STS.h"
 #include "Rasterizer.h"
 #include "SubPic_common.hpp"
-#include <windowsx.h>
 
 class CMyFont : public CFont
 {

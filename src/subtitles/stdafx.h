@@ -39,3 +39,34 @@
 
 // TODO: reference additional headers your program requires here
 
+#include <cstdint>
+
+#include <atlbase.h>
+#include <atlconv.h>
+#include <atlcoll.h>
+#include <atlstr.h>
+#include <atltypes.h>
+#include <windowsx.h>
+
+// typedef struct tagRECT
+// {
+//     int32_t    left;
+//     int32_t    top;
+//     int32_t    right;
+//     int32_t    bottom;
+// } RECT, *PRECT;
+
+// typedef struct tagPOINT
+// {
+//     int32_t  x;
+//     int32_t  y;
+// } POINT, *PPOINT;
+
+// typedef struct tagSIZE
+// {
+//     int32_t        cx;
+//     int32_t        cy;
+// } SIZE, *PSIZE, *LPSIZE;
+
+// typedef int POSITION;
+// typedef unsigned char BYTE;
