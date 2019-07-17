@@ -32,7 +32,6 @@ typedef const char *csri_rend;
 extern "C" struct csri_vsfilter_inst
 {
     CRenderedTextSubtitle *rts;
-    CCritSec *cs;
     CSize script_res;
     CSize screen_res;
     CRect video_rect;
@@ -60,8 +59,7 @@ CSRIAPI csri_inst *csri_open_file(csri_rend *renderer, const char *filename, str
     MultiByteToWideChar(CP_UTF8, 0, filename, -1, namebuf, namesize);
 
     csri_inst *inst = new csri_inst();
-    inst->cs = new CCritSec();
-    inst->rts = new CRenderedTextSubtitle(inst->cs);
+    inst->rts = new CRenderedTextSubtitle();
     if(inst->rts->Open(CString(namebuf), DEFAULT_CHARSET))
     {
         delete[] namebuf;
@@ -72,7 +70,6 @@ CSRIAPI csri_inst *csri_open_file(csri_rend *renderer, const char *filename, str
     {
         delete[] namebuf;
         delete inst->rts;
-        delete inst->cs;
         delete inst;
         return 0;
     }
@@ -84,8 +81,7 @@ CSRIAPI csri_inst *csri_open_mem(csri_rend *renderer, const void *data, size_t l
     // This is actually less effecient than opening a file, since this first writes the memory data to a temp file,
     // then opens that file and parses from that.
     csri_inst *inst = new csri_inst();
-    inst->cs = new CCritSec();
-    inst->rts = new CRenderedTextSubtitle(inst->cs);
+    inst->rts = new CRenderedTextSubtitle();
     if(inst->rts->Open((BYTE*)data, (int)length, DEFAULT_CHARSET, _T("CSRI memory subtitles")))
     {
         inst->readorder = 0;
@@ -94,7 +90,6 @@ CSRIAPI csri_inst *csri_open_mem(csri_rend *renderer, const void *data, size_t l
     else
     {
         delete inst->rts;
-        delete inst->cs;
         delete inst;
         return 0;
     }
@@ -106,7 +101,6 @@ CSRIAPI void csri_close(csri_inst *inst)
     if(!inst) return;
 
     delete inst->rts;
-    delete inst->cs;
     delete inst;
 }
 
@@ -181,7 +175,7 @@ CSRIAPI void csri_render(csri_inst *inst, struct csri_frame *frame, double time)
     }
     spd.vidrect = inst->video_rect;
 
-    inst->rts->Render(spd, (REFERENCE_TIME)(time * 10000000), inst->video_rect);
+    inst->rts->Render(spd, (int64_t)(time * 10000000), inst->video_rect);
 }
 
 

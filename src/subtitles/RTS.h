@@ -24,6 +24,7 @@
 #include "STS.h"
 #include "Rasterizer.h"
 #include "..\SubPic\ISubPic.h"
+#include <windowsx.h>
 
 class CMyFont : public CFont
 {
@@ -129,9 +130,9 @@ public:
     void Compact();
 
 #ifdef _VSMOD // patch m006. moveable vector clip
-    CRect PaintShadow(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha, MOD_MOVEVC& mod_vc, REFERENCE_TIME rt);
-    CRect PaintOutline(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha, MOD_MOVEVC& mod_vc, REFERENCE_TIME rt);
-    CRect PaintBody(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha, MOD_MOVEVC& mod_vc, REFERENCE_TIME rt);
+    CRect PaintShadow(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha, MOD_MOVEVC& mod_vc, int64_t rt);
+    CRect PaintOutline(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha, MOD_MOVEVC& mod_vc, int64_t rt);
+    CRect PaintBody(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha, MOD_MOVEVC& mod_vc, int64_t rt);
 #else
     CRect PaintShadow(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha);
     CRect PaintOutline(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha);
@@ -251,7 +252,7 @@ protected:
     virtual void OnChanged();
 
 public:
-    CRenderedTextSubtitle(CCritSec* pLock, STSStyle *styleOverride = NULL, bool doOverride = false);
+    CRenderedTextSubtitle(STSStyle *styleOverride = NULL, bool doOverride = false);
     virtual ~CRenderedTextSubtitle();
 
     virtual void Copy(CSimpleTextSubtitle& sts);
@@ -269,12 +270,12 @@ public:
     void Deinit();
 
     // ISubPicProvider
-    STDMETHODIMP_(POSITION) GetStartPosition(REFERENCE_TIME rt);
-    STDMETHODIMP_(POSITION) GetNext(POSITION pos);
-    STDMETHODIMP_(REFERENCE_TIME) GetStart(POSITION pos);
-    STDMETHODIMP_(REFERENCE_TIME) GetStop(POSITION pos);
-    STDMETHODIMP Render(SubPicDesc& spd, REFERENCE_TIME rt, RECT& bbox);
+    POSITION GetStartPosition(int64_t rt);
+    POSITION GetNext(POSITION pos);
+    int64_t GetStart(POSITION pos);
+    int64_t GetStop(POSITION pos);
+    HRESULT Render(SubPicDesc& spd, int64_t rt, RECT& bbox);
 
     // IPersist
-    STDMETHODIMP GetClassID(CLSID* pClassID);
+    HRESULT GetClassID(CLSID* pClassID);
 };

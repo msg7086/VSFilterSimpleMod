@@ -106,12 +106,12 @@ CMemSubPic::~CMemSubPic()
 
 // ISubPic
 
-STDMETHODIMP_(void*) CMemSubPic::GetObject()
+void* CMemSubPic::GetObject()
 {
     return (void*)&m_spd;
 }
 
-STDMETHODIMP CMemSubPic::GetDesc(SubPicDesc& spd)
+HRESULT CMemSubPic::GetDesc(SubPicDesc& spd)
 {
     spd.type = m_spd.type;
     spd.w = m_size.cx;
@@ -126,7 +126,7 @@ STDMETHODIMP CMemSubPic::GetDesc(SubPicDesc& spd)
     return S_OK;
 }
 
-STDMETHODIMP CMemSubPic::ClearDirtyRect(DWORD color)
+HRESULT CMemSubPic::ClearDirtyRect(DWORD color)
 {
     if(m_rcDirty.IsRectEmpty())
         return S_FALSE;
@@ -156,12 +156,12 @@ STDMETHODIMP CMemSubPic::ClearDirtyRect(DWORD color)
     return S_OK;
 }
 
-STDMETHODIMP CMemSubPic::Lock(SubPicDesc& spd)
+HRESULT CMemSubPic::Lock(SubPicDesc& spd)
 {
     return GetDesc(spd);
 }
 
-STDMETHODIMP CMemSubPic::Unlock(RECT* pDirtyRect)
+HRESULT CMemSubPic::Unlock(RECT* pDirtyRect)
 {
     m_rcDirty = pDirtyRect ? *pDirtyRect : CRect(0, 0, m_spd.w, m_spd.h);
 
@@ -275,7 +275,7 @@ STDMETHODIMP CMemSubPic::Unlock(RECT* pDirtyRect)
 #include "../dsutil/vd.h"
 #include <emmintrin.h>
 #endif
-STDMETHODIMP CMemSubPic::AlphaBlt(RECT* pSrc, RECT* pDst, SubPicDesc* pTarget)
+HRESULT CMemSubPic::AlphaBlt(RECT* pSrc, RECT* pDst, SubPicDesc* pTarget)
 {
     ASSERT(pTarget);
 

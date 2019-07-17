@@ -49,8 +49,6 @@ extern CComModule _Module;
 
 #define AFX_CLASS AFX_CLASS_IMPORT
 
-#include <streams.h>
-#include <dvdmedia.h>
 #include "..\DSUtil\DSUtil.h"
 
 //{{AFX_INSERT_LOCATION}}

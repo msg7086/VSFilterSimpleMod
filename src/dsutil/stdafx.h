@@ -45,6 +45,3 @@
 #include <atlcoll.h>
 #include <atlpath.h>
 
-#include <streams.h>
-#include <dvdmedia.h>
-

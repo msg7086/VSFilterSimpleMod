@@ -39,15 +39,14 @@
 namespace Plugin
 {
 
-class CFilter : public CCritSec
+class CFilter
 {
 private:
     CString m_fn;
 
 protected:
-    CCritSec m_csSubLock;
     std::shared_ptr<CSubPicQueueNoThread> m_pSubPicQueue;
-    std::shared_ptr<ISubPicProvider> m_pSubPicProvider;
+    std::shared_ptr<ISubPicProviderImpl> m_pSubPicProvider;
     int m_CharSet;
 
 public:
@@ -57,16 +56,14 @@ public:
 
     CString GetFileName()
     {
-        CAutoLock cAutoLock(this);
         return m_fn;
     }
     void SetFileName(CString fn)
     {
-        CAutoLock cAutoLock(this);
         m_fn = fn;
     }
 
-    bool Render(SubPicDesc& dst, REFERENCE_TIME rt)
+    bool Render(SubPicDesc& dst, int64_t rt)
     {
         if(!m_pSubPicProvider)
             return(false);
@@ -119,7 +116,7 @@ public:
 
         if(!m_pSubPicProvider)
         {
-            if(auto rts = std::make_shared<CRenderedTextSubtitle>(&m_csSubLock))
+            if(auto rts = std::make_shared<CRenderedTextSubtitle>())
             {
                 m_pSubPicProvider = rts;
                 if(rts->Open(CString(fn), CharSet)) SetFileName(fn);
@@ -171,12 +168,12 @@ public:
 
         float fps = (float)vi.fps_numerator / vi.fps_denominator;
 
-        REFERENCE_TIME timestamp;
+        int64_t timestamp;
 
         if(!vfr)
-            timestamp = (REFERENCE_TIME)(10000000i64 * n / fps);
+            timestamp = (int64_t)(10000000i64 * n / fps);
         else
-            timestamp = (REFERENCE_TIME)(10000000 * vfr->TimeStampFromFrameNumber(n));
+            timestamp = (int64_t)(10000000 * vfr->TimeStampFromFrameNumber(n));
 
         Render(dst, timestamp);
 
@@ -677,11 +674,11 @@ namespace VapourSynth {
 
             if (frameBuf)
             {
-                REFERENCE_TIME timestamp;
+                int64_t timestamp;
                 if (!d->vfr)
-                    timestamp = static_cast<REFERENCE_TIME>(10000000i64 * n / d->fps);
+                    timestamp = static_cast<int64_t>(10000000i64 * n / d->fps);
                 else
-                    timestamp = static_cast<REFERENCE_TIME>(10000000 * d->vfr->TimeStampFromFrameNumber(n));
+                    timestamp = static_cast<int64_t>(10000000 * d->vfr->TimeStampFromFrameNumber(n));
 
                 d->textsub->Render(frameBuf->subpic, timestamp);
                 if (d->accurate16bit && frameBuf->subpic2.bits)

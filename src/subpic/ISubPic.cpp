@@ -37,61 +37,63 @@ ISubPicImpl::ISubPicImpl()
 
 // ISubPic
 
-STDMETHODIMP_(REFERENCE_TIME) ISubPicImpl::GetStart()
+int64_t ISubPicImpl::GetStart()
 {
     return(m_rtStart);
 }
 
-STDMETHODIMP_(REFERENCE_TIME) ISubPicImpl::GetStop()
+int64_t ISubPicImpl::GetStop()
 {
     return(m_rtStop);
 }
 
-STDMETHODIMP_(REFERENCE_TIME) ISubPicImpl::GetSegmentStart()
+int64_t ISubPicImpl::GetSegmentStart()
 {
     if(m_rtSegmentStart)
         return(m_rtSegmentStart);
     return(m_rtStart);
 }
 
-STDMETHODIMP_(REFERENCE_TIME) ISubPicImpl::GetSegmentStop()
+int64_t ISubPicImpl::GetSegmentStop()
 {
     if(m_rtSegmentStop)
         return(m_rtSegmentStop);
     return(m_rtStop);
 }
 
-STDMETHODIMP_(void) ISubPicImpl::SetSegmentStart(REFERENCE_TIME rtStart)
+void ISubPicImpl::SetSegmentStart(int64_t rtStart)
 {
     m_rtSegmentStart = rtStart;
 }
 
-STDMETHODIMP_(void) ISubPicImpl::SetSegmentStop(REFERENCE_TIME rtStop)
+void ISubPicImpl::SetSegmentStop(int64_t rtStop)
 {
     m_rtSegmentStop = rtStop;
 }
 
 
 
-STDMETHODIMP_(void) ISubPicImpl::SetStart(REFERENCE_TIME rtStart)
+void ISubPicImpl::SetStart(int64_t rtStart)
 {
     m_rtStart = rtStart;
 }
 
-STDMETHODIMP_(void) ISubPicImpl::SetStop(REFERENCE_TIME rtStop)
+void ISubPicImpl::SetStop(int64_t rtStop)
 {
     m_rtStop = rtStop;
 }
 
-STDMETHODIMP ISubPicImpl::GetDirtyRect(RECT* pDirtyRect)
+HRESULT ISubPicImpl::GetDirtyRect(RECT* pDirtyRect)
 {
     return pDirtyRect ? *pDirtyRect = m_rcDirty, S_OK : E_POINTER;
 }
 
-STDMETHODIMP ISubPicImpl::GetSourceAndDest(SIZE* pSize, RECT* pRcSource, RECT* pRcDest)
+HRESULT ISubPicImpl::GetSourceAndDest(SIZE* pSize, RECT* pRcSource, RECT* pRcDest)
 {
-    CheckPointer(pRcSource, E_POINTER);
-    CheckPointer(pRcDest,	 E_POINTER);
+    if(!pRcSource)
+        return E_POINTER;
+    if(!pRcDest)
+        return E_POINTER;
 
     if(m_size.cx > 0 && m_size.cy > 0)
     {
@@ -114,12 +116,12 @@ STDMETHODIMP ISubPicImpl::GetSourceAndDest(SIZE* pSize, RECT* pRcSource, RECT* p
         return E_INVALIDARG;
 }
 
-STDMETHODIMP ISubPicImpl::GetMaxSize(SIZE* pMaxSize)
+HRESULT ISubPicImpl::GetMaxSize(SIZE* pMaxSize)
 {
     return pMaxSize ? *pMaxSize = m_maxsize, S_OK : E_POINTER;
 }
 
-STDMETHODIMP ISubPicImpl::SetSize(SIZE size, RECT vidrect)
+HRESULT ISubPicImpl::SetSize(SIZE size, RECT vidrect)
 {
     m_size = size;
     m_vidrect = vidrect;
@@ -148,7 +150,7 @@ STDMETHODIMP ISubPicImpl::SetSize(SIZE size, RECT vidrect)
     return S_OK;
 }
 
-STDMETHODIMP ISubPicImpl::SetVirtualTextureSize(const SIZE pSize, const POINT pTopLeft)
+HRESULT ISubPicImpl::SetVirtualTextureSize(const SIZE pSize, const POINT pTopLeft)
 {
     m_VirtualTextureSize.SetSize(pSize.cx, pSize.cy);
     m_VirtualTextureTopLeft.SetPoint(pTopLeft.x, pTopLeft.y);
@@ -168,19 +170,19 @@ ISubPicAllocatorImpl::ISubPicAllocatorImpl(SIZE cursize)
 
 // ISubPicAllocator
 
-STDMETHODIMP ISubPicAllocatorImpl::SetCurSize(SIZE cursize)
+HRESULT ISubPicAllocatorImpl::SetCurSize(SIZE cursize)
 {
     m_cursize = cursize;
     return S_OK;
 }
 
-STDMETHODIMP ISubPicAllocatorImpl::SetCurVidRect(RECT curvidrect)
+HRESULT ISubPicAllocatorImpl::SetCurVidRect(RECT curvidrect)
 {
     m_curvidrect = curvidrect;
     return S_OK;
 }
 
-STDMETHODIMP ISubPicAllocatorImpl::GetStatic(ISubPicImpl** ppSubPic)
+HRESULT ISubPicAllocatorImpl::GetStatic(ISubPicImpl** ppSubPic)
 {
     if(!ppSubPic)
         return E_POINTER;
@@ -198,7 +200,7 @@ STDMETHODIMP ISubPicAllocatorImpl::GetStatic(ISubPicImpl** ppSubPic)
     return S_OK;
 }
 
-STDMETHODIMP ISubPicAllocatorImpl::AllocDynamic(std::shared_ptr<ISubPicImpl>& ppSubPic)
+HRESULT ISubPicAllocatorImpl::AllocDynamic(std::shared_ptr<ISubPicImpl>& ppSubPic)
 {
     if(!Alloc(false, ppSubPic) || !ppSubPic)
         return E_OUTOFMEMORY;
@@ -213,8 +215,7 @@ STDMETHODIMP ISubPicAllocatorImpl::AllocDynamic(std::shared_ptr<ISubPicImpl>& pp
 // ISubPicProviderImpl
 //
 
-ISubPicProviderImpl::ISubPicProviderImpl(CCritSec* pLock)
-    : m_pLock(pLock)
+ISubPicProviderImpl::ISubPicProviderImpl()
 {
 }
 
@@ -224,14 +225,14 @@ ISubPicProviderImpl::~ISubPicProviderImpl()
 
 // ISubPicProvider
 
-STDMETHODIMP ISubPicProviderImpl::Lock()
+HRESULT ISubPicProviderImpl::Lock()
 {
-    return m_pLock ? m_pLock->Lock(), S_OK : E_FAIL;
+    return 0;
 }
 
-STDMETHODIMP ISubPicProviderImpl::Unlock()
+HRESULT ISubPicProviderImpl::Unlock()
 {
-    return m_pLock ? m_pLock->Unlock(), S_OK : E_FAIL;
+    return 0;
 }
 
 //
@@ -258,10 +259,8 @@ CSubPicQueueNoThread::~CSubPicQueueNoThread()
 
 // ISubPicQueue
 
-STDMETHODIMP CSubPicQueueNoThread::SetSubPicProvider(const std::shared_ptr<ISubPicProvider>& pSubPicProvider)
+HRESULT CSubPicQueueNoThread::SetSubPicProvider(const std::shared_ptr<ISubPicProviderImpl>& pSubPicProvider)
 {
-    CAutoLock cAutoLock(&m_csSubPicProvider);
-
 //	if(m_pSubPicProvider != pSubPicProvider)
     {
         m_pSubPicProvider = pSubPicProvider;
@@ -272,10 +271,8 @@ STDMETHODIMP CSubPicQueueNoThread::SetSubPicProvider(const std::shared_ptr<ISubP
     return S_OK;
 }
 
-STDMETHODIMP CSubPicQueueNoThread::GetSubPicProvider(std::shared_ptr<ISubPicProvider>& pSubPicProvider)
+HRESULT CSubPicQueueNoThread::GetSubPicProvider(std::shared_ptr<ISubPicProviderImpl>& pSubPicProvider)
 {
-    CAutoLock cAutoLock(&m_csSubPicProvider);
-
     if(m_pSubPicProvider)
     { 
  	   pSubPicProvider = m_pSubPicProvider; 
@@ -284,7 +281,7 @@ STDMETHODIMP CSubPicQueueNoThread::GetSubPicProvider(std::shared_ptr<ISubPicProv
     return !!pSubPicProvider ? S_OK : E_FAIL;
 }
 
-STDMETHODIMP CSubPicQueueNoThread::SetTime(REFERENCE_TIME rtNow)
+HRESULT CSubPicQueueNoThread::SetTime(int64_t rtNow)
 {
     m_rtNow = rtNow;
 
@@ -293,14 +290,14 @@ STDMETHODIMP CSubPicQueueNoThread::SetTime(REFERENCE_TIME rtNow)
 
 // private
 
-HRESULT CSubPicQueueNoThread::RenderTo(std::shared_ptr<ISubPicImpl>& pSubPic, REFERENCE_TIME rtStart, REFERENCE_TIME rtStop)
+HRESULT CSubPicQueueNoThread::RenderTo(std::shared_ptr<ISubPicImpl>& pSubPic, int64_t rtStart, int64_t rtStop)
 {
     HRESULT hr = E_FAIL;
 
     if(!pSubPic)
         return hr;
 
-    std::shared_ptr<ISubPicProvider> pSubPicProvider;
+    std::shared_ptr<ISubPicProviderImpl> pSubPicProvider;
     if(FAILED(GetSubPicProvider(pSubPicProvider)) || !pSubPicProvider)
         return hr;
 
@@ -327,23 +324,19 @@ HRESULT CSubPicQueueNoThread::RenderTo(std::shared_ptr<ISubPicImpl>& pSubPic, RE
 
 // ISubPicQueue
 
-STDMETHODIMP CSubPicQueueNoThread::Invalidate(REFERENCE_TIME rtInvalidate)
+HRESULT CSubPicQueueNoThread::Invalidate(int64_t rtInvalidate)
 {
-    CAutoLock cQueueLock(&m_csLock);
-
     m_pSubPic = NULL;
 
     return S_OK;
 }
 
-STDMETHODIMP_(bool) CSubPicQueueNoThread::LookupSubPic(REFERENCE_TIME rtNow, std::shared_ptr<ISubPicImpl> &ppSubPic)
+bool CSubPicQueueNoThread::LookupSubPic(int64_t rtNow, std::shared_ptr<ISubPicImpl> &ppSubPic)
 {
 
     std::shared_ptr<ISubPicImpl> pSubPic;
 
     {
-        CAutoLock cAutoLock(&m_csLock);
-
         if(!m_pSubPic)
         {
             if(FAILED(m_pAllocator->AllocDynamic(m_pSubPic)))
@@ -359,7 +352,7 @@ STDMETHODIMP_(bool) CSubPicQueueNoThread::LookupSubPic(REFERENCE_TIME rtNow, std
     }
     else
     {
-        std::shared_ptr<ISubPicProvider> pSubPicProvider;
+        std::shared_ptr<ISubPicProviderImpl> pSubPicProvider;
         GetSubPicProvider(pSubPicProvider); 
  	    if (pSubPicProvider && SUCCEEDED(pSubPicProvider->Lock())) 
         {
@@ -382,8 +375,6 @@ STDMETHODIMP_(bool) CSubPicQueueNoThread::LookupSubPic(REFERENCE_TIME rtNow, std
 
             if(ppSubPic)
             {
-                CAutoLock cAutoLock(&m_csLock);
-
                 m_pSubPic = ppSubPic;
             }
         }

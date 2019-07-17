@@ -40,11 +40,11 @@ public:
     virtual ~CMemSubPic();
 
     // ISubPic
-    STDMETHODIMP GetDesc(SubPicDesc& spd);
-    STDMETHODIMP ClearDirtyRect(DWORD color);
-    STDMETHODIMP Lock(SubPicDesc& spd);
-    STDMETHODIMP Unlock(RECT* pDirtyRect);
-    STDMETHODIMP AlphaBlt(RECT* pSrc, RECT* pDst, SubPicDesc* pTarget);
+    HRESULT GetDesc(SubPicDesc& spd);
+    HRESULT ClearDirtyRect(DWORD color);
+    HRESULT Lock(SubPicDesc& spd);
+    HRESULT Unlock(RECT* pDirtyRect);
+    HRESULT AlphaBlt(RECT* pSrc, RECT* pDst, SubPicDesc* pTarget);
 };
 
 // CMemSubPicAllocator

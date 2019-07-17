@@ -22,7 +22,6 @@
 #pragma once
 
 #include <atlcoll.h>
-#include <wxutil.h>
 #include <vector>
 #include "TextFile.h"
 
@@ -132,7 +131,7 @@ public:
 
     bool operator == (MOD_JITTER& mj);
 
-    CPoint getOffset(REFERENCE_TIME rt);
+    CPoint getOffset(int64_t rt);
 };
 #endif
 

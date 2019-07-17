@@ -990,7 +990,7 @@ void CLine::Compact()
 }
 
 #ifdef _VSMOD // patch m006. moveable vector clip
-CRect CLine::PaintShadow(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha, MOD_MOVEVC& mod_vc, REFERENCE_TIME rt)
+CRect CLine::PaintShadow(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha, MOD_MOVEVC& mod_vc, int64_t rt)
 #else
 CRect CLine::PaintShadow(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha)
 #endif
@@ -1058,7 +1058,7 @@ CRect CLine::PaintShadow(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPo
 }
 
 #ifdef _VSMOD // patch m006. moveable vector clip
-CRect CLine::PaintOutline(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha, MOD_MOVEVC& mod_vc, REFERENCE_TIME rt)
+CRect CLine::PaintOutline(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha, MOD_MOVEVC& mod_vc, int64_t rt)
 #else
 CRect CLine::PaintOutline(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha)
 #endif
@@ -1123,7 +1123,7 @@ CRect CLine::PaintOutline(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CP
 }
 
 #ifdef _VSMOD // patch m006. moveable vector clip
-CRect CLine::PaintBody(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha, MOD_MOVEVC& mod_vc, REFERENCE_TIME rt)
+CRect CLine::PaintBody(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha, MOD_MOVEVC& mod_vc, int64_t rt)
 #else
 CRect CLine::PaintBody(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha)
 #endif
@@ -1643,8 +1643,8 @@ CRect CScreenLayoutAllocator::AllocRect(CSubtitle* s, int segment, int entry, in
 
 // CRenderedTextSubtitle
 
-CRenderedTextSubtitle::CRenderedTextSubtitle(CCritSec* pLock, STSStyle *styleOverride, bool doOverride)
-    : ISubPicProviderImpl(pLock), m_doOverrideStyle(doOverride), m_pStyleOverride(styleOverride)
+CRenderedTextSubtitle::CRenderedTextSubtitle(STSStyle *styleOverride, bool doOverride)
+    : ISubPicProviderImpl(), m_doOverrideStyle(doOverride), m_pStyleOverride(styleOverride)
 {
     m_size = CSize(0, 0);
 
@@ -3292,7 +3292,7 @@ CSubtitle* CRenderedTextSubtitle::GetSubtitle(int entry)
 
 // ISubPicProvider
 
-STDMETHODIMP_(POSITION) CRenderedTextSubtitle::GetStartPosition(REFERENCE_TIME rt)
+POSITION CRenderedTextSubtitle::GetStartPosition(int64_t rt)
 {
     int iSegment = -1;
     SearchSubs((int)(rt / 10000), &iSegment, NULL);
@@ -3302,7 +3302,7 @@ STDMETHODIMP_(POSITION) CRenderedTextSubtitle::GetStartPosition(REFERENCE_TIME r
     return(GetNext((POSITION)iSegment));
 }
 
-STDMETHODIMP_(POSITION) CRenderedTextSubtitle::GetNext(POSITION pos)
+POSITION CRenderedTextSubtitle::GetNext(POSITION pos)
 {
     int iSegment = (int)pos;
 
@@ -3313,12 +3313,12 @@ STDMETHODIMP_(POSITION) CRenderedTextSubtitle::GetNext(POSITION pos)
     return(stss ? (POSITION)(iSegment + 1) : NULL);
 }
 
-STDMETHODIMP_(REFERENCE_TIME) CRenderedTextSubtitle::GetStart(POSITION pos)
+int64_t CRenderedTextSubtitle::GetStart(POSITION pos)
 {
     return(10000i64 * TranslateSegmentStart((int)pos - 1));
 }
 
-STDMETHODIMP_(REFERENCE_TIME) CRenderedTextSubtitle::GetStop(POSITION pos)
+int64_t CRenderedTextSubtitle::GetStop(POSITION pos)
 {
     return(10000i64 * TranslateSegmentEnd((int)pos - 1));
 }
@@ -3335,7 +3335,7 @@ static int lscomp(const void* ls1, const void* ls2)
     return(ret);
 }
 
-STDMETHODIMP CRenderedTextSubtitle::Render(SubPicDesc& spd, REFERENCE_TIME rt, RECT& bbox)
+HRESULT CRenderedTextSubtitle::Render(SubPicDesc& spd, int64_t rt, RECT& bbox)
 {
     CRect bbox2(0, 0, 0, 0);
 
@@ -3869,7 +3869,7 @@ STDMETHODIMP CRenderedTextSubtitle::Render(SubPicDesc& spd, REFERENCE_TIME rt, R
 
 // IPersist
 
-STDMETHODIMP CRenderedTextSubtitle::GetClassID(CLSID* pClassID)
+HRESULT CRenderedTextSubtitle::GetClassID(CLSID* pClassID)
 {
     return pClassID ? *pClassID = __uuidof(this), S_OK : E_POINTER;
 }

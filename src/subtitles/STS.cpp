@@ -675,7 +675,21 @@ static bool LoadFont(CString& font)
         fn.Format(_T("%sfont%08x.ttf"), path, chksum);
 
         CFileStatus	fs;
-        if(!CFileGetStatus(fn, fs))
+        HRESULT r;
+        try
+        {
+            r = CFile::GetStatus(fn, fs);
+        }
+        catch(CException* e)
+        {
+            // MFCBUG: E_INVALIDARG / "Parameter is incorrect" is thrown for certain cds (vs2003)
+            // http://groups.google.co.uk/groups?hl=en&lr=&ie=UTF-8&threadm=OZuXYRzWDHA.536%40TK2MSFTNGP10.phx.gbl&rnum=1&prev=/groups%3Fhl%3Den%26lr%3D%26ie%3DISO-8859-1
+            TRACE(_T("CFile::GetStatus has thrown an exception\n"));
+            e->Delete();
+            r = false;
+        }
+
+        if(!r)
         {
             CFile f;
             if(f.Open(fn, CFile::modeCreate | CFile::modeWrite | CFile::typeBinary | CFile::shareDenyNone))
@@ -2539,7 +2553,7 @@ bool MOD_JITTER::operator == (MOD_JITTER& mj)
            && period == mj.period);
 }
 
-CPoint MOD_JITTER::getOffset(REFERENCE_TIME rt)
+CPoint MOD_JITTER::getOffset(int64_t rt)
 {
     if(!enabled) return CPoint(0, 0);
     if(period == 0) period = 1;

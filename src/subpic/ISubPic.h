@@ -47,8 +47,8 @@ struct SubPicDesc
 class ISubPicImpl
 {
 protected:
-	REFERENCE_TIME m_rtStart, m_rtStop;
-	REFERENCE_TIME m_rtSegmentStart, m_rtSegmentStop;
+	int64_t m_rtStart, m_rtStop;
+	int64_t m_rtSegmentStart, m_rtSegmentStop;
 	CRect	m_rcDirty;
 	CSize	m_maxsize;
 	CSize	m_size;
@@ -91,31 +91,31 @@ public:
 
 	// ISubPic
 
-	STDMETHODIMP_(REFERENCE_TIME) GetStart();
-	STDMETHODIMP_(REFERENCE_TIME) GetStop();
-	STDMETHODIMP_(void) SetStart(REFERENCE_TIME rtStart);
-	STDMETHODIMP_(void) SetStop(REFERENCE_TIME rtStop);
+	int64_t GetStart();
+	int64_t GetStop();
+	void SetStart(int64_t rtStart);
+	void SetStop(int64_t rtStop);
 
-	STDMETHODIMP GetDesc(SubPicDesc& spd);
+	HRESULT GetDesc(SubPicDesc& spd);
 
-	virtual STDMETHODIMP ClearDirtyRect(DWORD color) = 0;
-	STDMETHODIMP GetDirtyRect(RECT* pDirtyRect);
+	virtual HRESULT ClearDirtyRect(DWORD color) = 0;
+	HRESULT GetDirtyRect(RECT* pDirtyRect);
 
-	STDMETHODIMP GetMaxSize(SIZE* pMaxSize);
-	STDMETHODIMP SetSize(SIZE size, RECT vidrect);
+	HRESULT GetMaxSize(SIZE* pMaxSize);
+	HRESULT SetSize(SIZE size, RECT vidrect);
 
-	virtual STDMETHODIMP Lock(SubPicDesc& spd) = 0;
-	virtual STDMETHODIMP Unlock(RECT* pDirtyRect) = 0;
+	virtual HRESULT Lock(SubPicDesc& spd) = 0;
+	virtual HRESULT Unlock(RECT* pDirtyRect) = 0;
 
-	virtual STDMETHODIMP AlphaBlt(RECT* pSrc, RECT* pDst, SubPicDesc* pTarget) = 0;
+	virtual HRESULT AlphaBlt(RECT* pSrc, RECT* pDst, SubPicDesc* pTarget) = 0;
 
-	STDMETHODIMP SetVirtualTextureSize (const SIZE pSize, const POINT pTopLeft);
-	STDMETHODIMP GetSourceAndDest(SIZE* pSize, RECT* pRcSource, RECT* pRcDest);
+	HRESULT SetVirtualTextureSize (const SIZE pSize, const POINT pTopLeft);
+	HRESULT GetSourceAndDest(SIZE* pSize, RECT* pRcSource, RECT* pRcDest);
 
-	STDMETHODIMP_(REFERENCE_TIME) GetSegmentStart();
-	STDMETHODIMP_(REFERENCE_TIME) GetSegmentStop();
-	STDMETHODIMP_(void) SetSegmentStart(REFERENCE_TIME rtStart);
-	STDMETHODIMP_(void) SetSegmentStop(REFERENCE_TIME rtStop);
+	int64_t GetSegmentStart();
+	int64_t GetSegmentStop();
+	void SetSegmentStart(int64_t rtStart);
+	void SetSegmentStop(int64_t rtStop);
 
 };
 
@@ -138,55 +138,38 @@ public:
 
 	// ISubPicAllocator
 
-	STDMETHODIMP SetCurSize(SIZE cursize);
-	STDMETHODIMP SetCurVidRect(RECT curvidrect);
-	STDMETHODIMP GetStatic(ISubPicImpl** ppSubPic);
-	STDMETHODIMP AllocDynamic(std::shared_ptr<ISubPicImpl>& ppSubPic);
-	STDMETHODIMP SetMaxTextureSize(SIZE MaxTextureSize) { return E_NOTIMPL; };
+	HRESULT SetCurSize(SIZE cursize);
+	HRESULT SetCurVidRect(RECT curvidrect);
+	HRESULT GetStatic(ISubPicImpl** ppSubPic);
+	HRESULT AllocDynamic(std::shared_ptr<ISubPicImpl>& ppSubPic);
+	HRESULT SetMaxTextureSize(SIZE MaxTextureSize) { return E_NOTIMPL; };
 };
 
 //
 // ISubPicProvider
 //
 
-[uuid("D62B9A1A-879A-42db-AB04-88AA8F243CFD")]
-interface ISubPicProvider
-{
-	STDMETHOD (Lock) () PURE;
-	STDMETHOD (Unlock) () PURE;
-
-	STDMETHOD_(POSITION, GetStartPosition) (REFERENCE_TIME rt) PURE;
-	STDMETHOD_(POSITION, GetNext) (POSITION pos) PURE;
-
-	STDMETHOD_(REFERENCE_TIME, GetStart) (POSITION pos) PURE;
-	STDMETHOD_(REFERENCE_TIME, GetStop) (POSITION pos) PURE;
-
-	STDMETHOD (Render) (SubPicDesc& spd, REFERENCE_TIME rt, RECT& bbox) PURE;
-	STDMETHOD (GetTextureSize) (POSITION pos, SIZE& MaxTextureSize, SIZE& VirtualSize, POINT& VirtualTopLeft) PURE;
-};
-
-class ISubPicProviderImpl : public ISubPicProvider
+class ISubPicProviderImpl
 {
 protected:
-	CCritSec* m_pLock;
 
 public:
-	ISubPicProviderImpl(CCritSec* pLock);
+	ISubPicProviderImpl();
 	virtual ~ISubPicProviderImpl();
 
 	// ISubPicProvider
 
-	STDMETHODIMP Lock();
-	STDMETHODIMP Unlock();
+	HRESULT Lock();
+	HRESULT Unlock();
 
-	STDMETHODIMP_(POSITION) GetStartPosition(REFERENCE_TIME rt) = 0;
-	STDMETHODIMP_(POSITION) GetNext(POSITION pos) = 0;
+	virtual POSITION GetStartPosition(int64_t rt) = 0;
+	virtual POSITION GetNext(POSITION pos) = 0;
 
-	STDMETHODIMP_(REFERENCE_TIME) GetStart(POSITION pos) = 0;
-	STDMETHODIMP_(REFERENCE_TIME) GetStop(POSITION pos) = 0;
+	virtual int64_t GetStart(POSITION pos) = 0;
+	virtual int64_t GetStop(POSITION pos) = 0;
 
-	STDMETHODIMP Render(SubPicDesc& spd, REFERENCE_TIME rt, RECT& bbox) = 0;
-	STDMETHODIMP GetTextureSize (POSITION pos, SIZE& MaxTextureSize, SIZE& VirtualSize, POINT& VirtualTopLeft) { return E_NOTIMPL; };
+	virtual HRESULT Render(SubPicDesc& spd, int64_t rt, RECT& bbox) = 0;
+	virtual HRESULT GetTextureSize (POSITION pos, SIZE& MaxTextureSize, SIZE& VirtualSize, POINT& VirtualTopLeft) { return E_NOTIMPL; };
 };
 
 //
@@ -195,18 +178,16 @@ public:
 
 class CSubPicQueueNoThread
 {
-	CCritSec m_csSubPicProvider;
-	std::shared_ptr<ISubPicProvider> m_pSubPicProvider;
-	CCritSec m_csLock;
+	std::shared_ptr<ISubPicProviderImpl> m_pSubPicProvider;
 	std::shared_ptr<ISubPicImpl> m_pSubPic;
 
 protected:
-	REFERENCE_TIME m_rtNow;
-	REFERENCE_TIME m_rtNowLast;
+	int64_t m_rtNow;
+	int64_t m_rtNowLast;
 
 	std::shared_ptr<ISubPicAllocatorImpl> m_pAllocator;
 
-	HRESULT RenderTo(std::shared_ptr<ISubPicImpl>& pSubPic, REFERENCE_TIME rtStart, REFERENCE_TIME rtStop);
+	HRESULT RenderTo(std::shared_ptr<ISubPicImpl>& pSubPic, int64_t rtStart, int64_t rtStop);
 
 public:
 	CSubPicQueueNoThread(std::shared_ptr<ISubPicAllocatorImpl>& pAllocator, HRESULT* phr);
@@ -214,12 +195,12 @@ public:
 
 	// ISubPicQueue
 
-	STDMETHODIMP SetSubPicProvider(const std::shared_ptr<ISubPicProvider>& pSubPicProvider);
-	STDMETHODIMP GetSubPicProvider(std::shared_ptr<ISubPicProvider>& pSubPicProvider);
+	HRESULT SetSubPicProvider(const std::shared_ptr<ISubPicProviderImpl>& pSubPicProvider);
+	HRESULT GetSubPicProvider(std::shared_ptr<ISubPicProviderImpl>& pSubPicProvider);
 
-	STDMETHODIMP SetTime(REFERENCE_TIME rtNow);
+	HRESULT SetTime(int64_t rtNow);
 
-	STDMETHODIMP Invalidate(REFERENCE_TIME rtInvalidate = -1);
-	STDMETHODIMP_(bool) LookupSubPic(REFERENCE_TIME rtNow, std::shared_ptr<ISubPicImpl> &pSubPic);
+	HRESULT Invalidate(int64_t rtInvalidate = -1);
+	bool LookupSubPic(int64_t rtNow, std::shared_ptr<ISubPicImpl> &pSubPic);
 };
 

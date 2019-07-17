@@ -20,41 +20,11 @@
  */
 
 #pragma once
-/*
-#ifdef UNICODE
-#ifdef DEBUG
-#pragma comment(lib, "dsutilDU")
-#else
-#pragma comment(lib, "dsutilRU")
-#endif
-#else
-#ifdef DEBUG
-#pragma comment(lib, "dsutilD")
-#else
-#pragma comment(lib, "dsutilR")
-#endif
-#endif */
-
-//#include "MediaTypes.h"
-#include "text.h"
-
-#define LCID_NOSUBTITLES			-1
-
-extern BOOL CFileGetStatus(LPCTSTR lpszFileName, CFileStatus& status);
 
 #define QI(i) (riid == __uuidof(i)) ? GetInterface((i*)this, ppv) :
 #define QI2(i) (riid == IID_##i) ? GetInterface((i*)this, ppv) :
 
 #define countof(array) (sizeof(array)/sizeof(array[0]))
-
-template <class T>
-static CUnknown* WINAPI CreateInstance(LPUNKNOWN lpunk, HRESULT* phr)
-{
-    *phr = S_OK;
-    CUnknown* punk = DNew T(lpunk, phr);
-    if(punk == NULL) *phr = E_OUTOFMEMORY;
-    return punk;
-}
 
 #define SAFE_DELETE(p)       { if(p) { delete (p);     (p)=NULL; } }
 #define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
