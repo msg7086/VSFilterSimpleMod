@@ -54,7 +54,7 @@ class CMemSubPicAllocator : public ISubPicAllocatorImpl
     int m_type;
     CSize m_maxsize;
 
-    bool Alloc(bool fStatic, ISubPic** ppSubPic);
+    bool Alloc(bool fStatic, std::shared_ptr<ISubPicImpl>& ppSubPic);
 
 public:
     CMemSubPicAllocator(int type, SIZE maxsize);

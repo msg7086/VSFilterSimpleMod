@@ -543,11 +543,8 @@ CMemSubPicAllocator::CMemSubPicAllocator(int type, SIZE maxsize)
 
 // ISubPicAllocatorImpl
 
-bool CMemSubPicAllocator::Alloc(bool fStatic, ISubPic** ppSubPic)
+bool CMemSubPicAllocator::Alloc(bool fStatic, std::shared_ptr<ISubPicImpl>& ppSubPic)
 {
-    if(!ppSubPic)
-        return(false);
-
     SubPicDesc spd;
     spd.w = m_maxsize.cx;
     spd.h = m_maxsize.cy;
@@ -558,11 +555,10 @@ bool CMemSubPicAllocator::Alloc(bool fStatic, ISubPic** ppSubPic)
  	if(!spd.bits) 
         return(false);
 
-    *ppSubPic = DNew CMemSubPic(spd); 
- 	if(!(*ppSubPic)) 
+	std::shared_ptr<ISubPicImpl> subpic(DNew CMemSubPic(spd));
+	ppSubPic = subpic;
+ 	if(!(ppSubPic)) 
         return(false);
-
-    (*ppSubPic)->AddRef();
 
     return(true);
 }

@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include <memory>
 #include <atlbase.h>
 #include <atlcoll.h>
 #include "CoordGeom.h"
@@ -43,38 +44,7 @@ struct SubPicDesc
 // ISubPic
 //
 
-[uuid("449E11F3-52D1-4a27-AA61-E2733AC92CC0")]
-interface ISubPic : public IUnknown
-{
-	STDMETHOD_(void*, GetObject) () PURE;
-
-	STDMETHOD_(REFERENCE_TIME, GetStart) () PURE;
-	STDMETHOD_(REFERENCE_TIME, GetStop) () PURE;
-	STDMETHOD_(void, SetStart) (REFERENCE_TIME rtStart) PURE;
-	STDMETHOD_(void, SetStop) (REFERENCE_TIME rtStop) PURE;
-
-	STDMETHOD (GetDesc) (SubPicDesc& spd /*[out]*/) PURE;
-
-	STDMETHOD (ClearDirtyRect) (DWORD color /*[in]*/) PURE;
-	STDMETHOD (GetDirtyRect) (RECT* pDirtyRect /*[out]*/) PURE;
-
-	STDMETHOD (GetMaxSize) (SIZE* pMaxSize /*[out]*/) PURE;
-	STDMETHOD (SetSize) (SIZE pSize /*[in]*/, RECT vidrect /*[in]*/) PURE;
-
-	STDMETHOD (Lock) (SubPicDesc& spd /*[out]*/) PURE;
-	STDMETHOD (Unlock) (RECT* pDirtyRect /*[in]*/) PURE;
-
-	STDMETHOD (AlphaBlt) (RECT* pSrc, RECT* pDst, SubPicDesc* pTarget = NULL /*[in]*/) PURE;
-	STDMETHOD (GetSourceAndDest) (SIZE* pSize /*[in]*/, RECT* pRcSource /*[out]*/, RECT* pRcDest /*[out]*/) PURE;
-	STDMETHOD (SetVirtualTextureSize) (const SIZE pSize, const POINT pTopLeft) PURE;
-
-	STDMETHOD_(REFERENCE_TIME, GetSegmentStart) () PURE;
-	STDMETHOD_(REFERENCE_TIME, GetSegmentStop) () PURE;
-	STDMETHOD_(void, SetSegmentStart) (REFERENCE_TIME rtStart) PURE;
-	STDMETHOD_(void, SetSegmentStop) (REFERENCE_TIME rtStop) PURE;
-};
-
-class ISubPicImpl : public CUnknown, public ISubPic
+class ISubPicImpl
 {
 protected:
 	REFERENCE_TIME m_rtStart, m_rtStop;
@@ -119,9 +89,6 @@ protected:
 public:
 	ISubPicImpl();
 
-	DECLARE_IUNKNOWN;
-	STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv);
-
 	// ISubPic
 
 	STDMETHODIMP_(REFERENCE_TIME) GetStart();
@@ -129,18 +96,18 @@ public:
 	STDMETHODIMP_(void) SetStart(REFERENCE_TIME rtStart);
 	STDMETHODIMP_(void) SetStop(REFERENCE_TIME rtStop);
 
-	STDMETHODIMP GetDesc(SubPicDesc& spd) = 0;
+	STDMETHODIMP GetDesc(SubPicDesc& spd);
 
-	STDMETHODIMP ClearDirtyRect(DWORD color) = 0;
+	virtual STDMETHODIMP ClearDirtyRect(DWORD color) = 0;
 	STDMETHODIMP GetDirtyRect(RECT* pDirtyRect);
 
 	STDMETHODIMP GetMaxSize(SIZE* pMaxSize);
 	STDMETHODIMP SetSize(SIZE size, RECT vidrect);
 
-	STDMETHODIMP Lock(SubPicDesc& spd) = 0;
-	STDMETHODIMP Unlock(RECT* pDirtyRect) = 0;
+	virtual STDMETHODIMP Lock(SubPicDesc& spd) = 0;
+	virtual STDMETHODIMP Unlock(RECT* pDirtyRect) = 0;
 
-	STDMETHODIMP AlphaBlt(RECT* pSrc, RECT* pDst, SubPicDesc* pTarget) = 0;
+	virtual STDMETHODIMP AlphaBlt(RECT* pSrc, RECT* pDst, SubPicDesc* pTarget) = 0;
 
 	STDMETHODIMP SetVirtualTextureSize (const SIZE pSize, const POINT pTopLeft);
 	STDMETHODIMP GetSourceAndDest(SIZE* pSize, RECT* pRcSource, RECT* pRcDest);
@@ -156,43 +123,25 @@ public:
 // ISubPicAllocator
 //
 
-[uuid("CF7C3C23-6392-4a42-9E72-0736CFF793CB")]
-interface ISubPicAllocator : public IUnknown
+class ISubPicAllocatorImpl
 {
-	STDMETHOD (SetCurSize) (SIZE size /*[in]*/) PURE;
-	STDMETHOD (SetCurVidRect) (RECT curvidrect) PURE;
-
-	STDMETHOD (GetStatic) (ISubPic** ppSubPic /*[out]*/) PURE;
-	STDMETHOD (AllocDynamic) (ISubPic** ppSubPic /*[out]*/) PURE;
-
-	STDMETHOD (ChangeDevice) (IUnknown* pDev) PURE;
-	STDMETHOD (SetMaxTextureSize) (SIZE MaxTextureSize) PURE;
-};
-
-
-class ISubPicAllocatorImpl : public CUnknown, public ISubPicAllocator
-{
-	CComPtr<ISubPic> m_pStatic;
+	std::shared_ptr<ISubPicImpl> m_pStatic;
 
 private:
 	CSize m_cursize;
 	CRect m_curvidrect;
 
-	virtual bool Alloc(bool fStatic, ISubPic** ppSubPic) = 0;
+	virtual bool Alloc(bool fStatic, std::shared_ptr<ISubPicImpl>& ppSubPic) = 0;
 
 public:
 	ISubPicAllocatorImpl(SIZE cursize);
-
-	DECLARE_IUNKNOWN;
-	STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv);
 
 	// ISubPicAllocator
 
 	STDMETHODIMP SetCurSize(SIZE cursize);
 	STDMETHODIMP SetCurVidRect(RECT curvidrect);
-	STDMETHODIMP GetStatic(ISubPic** ppSubPic);
-	STDMETHODIMP AllocDynamic(ISubPic** ppSubPic);
-	STDMETHODIMP ChangeDevice(IUnknown* pDev);
+	STDMETHODIMP GetStatic(ISubPicImpl** ppSubPic);
+	STDMETHODIMP AllocDynamic(std::shared_ptr<ISubPicImpl>& ppSubPic);
 	STDMETHODIMP SetMaxTextureSize(SIZE MaxTextureSize) { return E_NOTIMPL; };
 };
 
@@ -201,7 +150,7 @@ public:
 //
 
 [uuid("D62B9A1A-879A-42db-AB04-88AA8F243CFD")]
-interface ISubPicProvider : public IUnknown
+interface ISubPicProvider
 {
 	STDMETHOD (Lock) () PURE;
 	STDMETHOD (Unlock) () PURE;
@@ -216,7 +165,7 @@ interface ISubPicProvider : public IUnknown
 	STDMETHOD (GetTextureSize) (POSITION pos, SIZE& MaxTextureSize, SIZE& VirtualSize, POINT& VirtualTopLeft) PURE;
 };
 
-class ISubPicProviderImpl : public CUnknown, public ISubPicProvider
+class ISubPicProviderImpl : public ISubPicProvider
 {
 protected:
 	CCritSec* m_pLock;
@@ -224,9 +173,6 @@ protected:
 public:
 	ISubPicProviderImpl(CCritSec* pLock);
 	virtual ~ISubPicProviderImpl();
-
-	DECLARE_IUNKNOWN;
-	STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv);
 
 	// ISubPicProvider
 
@@ -247,62 +193,33 @@ public:
 // ISubPicQueue
 //
 
-[uuid("C8334466-CD1E-4ad1-9D2D-8EE8519BD180")]
-interface ISubPicQueue : public IUnknown
-{
-	STDMETHOD (SetSubPicProvider) (ISubPicProvider* pSubPicProvider /*[in]*/) PURE;
-	STDMETHOD (GetSubPicProvider) (ISubPicProvider** pSubPicProvider /*[out]*/) PURE;
-
-	STDMETHOD (SetTime) (REFERENCE_TIME rtNow /*[in]*/) PURE;
-
-	STDMETHOD (Invalidate) (REFERENCE_TIME rtInvalidate = -1) PURE;
-	STDMETHOD_(bool, LookupSubPic) (REFERENCE_TIME rtNow /*[in]*/, CComPtr<ISubPic> &pSubPic /*[out]*/) PURE;
-};
-
-class ISubPicQueueImpl : public CUnknown, public ISubPicQueue
+class CSubPicQueueNoThread
 {
 	CCritSec m_csSubPicProvider;
-	CComPtr<ISubPicProvider> m_pSubPicProvider;
+	std::shared_ptr<ISubPicProvider> m_pSubPicProvider;
+	CCritSec m_csLock;
+	std::shared_ptr<ISubPicImpl> m_pSubPic;
 
 protected:
 	REFERENCE_TIME m_rtNow;
 	REFERENCE_TIME m_rtNowLast;
 
-	CComPtr<ISubPicAllocator> m_pAllocator;
+	std::shared_ptr<ISubPicAllocatorImpl> m_pAllocator;
 
-	HRESULT RenderTo(ISubPic* pSubPic, REFERENCE_TIME rtStart, REFERENCE_TIME rtStop);
-
-public:
-	ISubPicQueueImpl(ISubPicAllocator* pAllocator, HRESULT* phr);
-	virtual ~ISubPicQueueImpl();
-
-	DECLARE_IUNKNOWN;
-	STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv);
-
-	// ISubPicQueue
-
-	STDMETHODIMP SetSubPicProvider(ISubPicProvider* pSubPicProvider);
-	STDMETHODIMP GetSubPicProvider(ISubPicProvider** pSubPicProvider);
-
-	STDMETHODIMP SetTime(REFERENCE_TIME rtNow);
-/*
-	STDMETHODIMP Invalidate(REFERENCE_TIME rtInvalidate = -1) = 0;
-	STDMETHODIMP_(bool) LookupSubPic(REFERENCE_TIME rtNow, ISubPic** ppSubPic) = 0;
-*/
-};
-
-class CSubPicQueueNoThread : public ISubPicQueueImpl
-{
-	CCritSec m_csLock;
-	CComPtr<ISubPic> m_pSubPic;
+	HRESULT RenderTo(std::shared_ptr<ISubPicImpl>& pSubPic, REFERENCE_TIME rtStart, REFERENCE_TIME rtStop);
 
 public:
-	CSubPicQueueNoThread(ISubPicAllocator* pAllocator, HRESULT* phr);
+	CSubPicQueueNoThread(std::shared_ptr<ISubPicAllocatorImpl>& pAllocator, HRESULT* phr);
 	virtual ~CSubPicQueueNoThread();
 
 	// ISubPicQueue
 
+	STDMETHODIMP SetSubPicProvider(const std::shared_ptr<ISubPicProvider>& pSubPicProvider);
+	STDMETHODIMP GetSubPicProvider(std::shared_ptr<ISubPicProvider>& pSubPicProvider);
+
+	STDMETHODIMP SetTime(REFERENCE_TIME rtNow);
+
 	STDMETHODIMP Invalidate(REFERENCE_TIME rtInvalidate = -1);
-	STDMETHODIMP_(bool) LookupSubPic(REFERENCE_TIME rtNow, CComPtr<ISubPic> &pSubPic);
+	STDMETHODIMP_(bool) LookupSubPic(REFERENCE_TIME rtNow, std::shared_ptr<ISubPicImpl> &pSubPic);
 };
 

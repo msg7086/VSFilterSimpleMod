@@ -268,9 +268,6 @@ public:
     bool Init(CSize size, CRect vidrect); // will call Deinit()
     void Deinit();
 
-    DECLARE_IUNKNOWN
-    STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv);
-
     // ISubPicProvider
     STDMETHODIMP_(POSITION) GetStartPosition(REFERENCE_TIME rt);
     STDMETHODIMP_(POSITION) GetNext(POSITION pos);

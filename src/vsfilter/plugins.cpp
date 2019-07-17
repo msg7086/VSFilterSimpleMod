@@ -46,9 +46,8 @@ private:
 
 protected:
     CCritSec m_csSubLock;
-    CComPtr<ISubPicQueue> m_pSubPicQueue;
-    CComPtr<ISubPicProvider> m_pSubPicProvider;
-    DWORD_PTR m_SubPicProviderId;
+    std::shared_ptr<CSubPicQueueNoThread> m_pSubPicQueue;
+    std::shared_ptr<ISubPicProvider> m_pSubPicProvider;
     int m_CharSet;
 
 public:
@@ -76,23 +75,18 @@ public:
 
         if(!m_pSubPicQueue)
         {
-            CComPtr<ISubPicAllocator> pAllocator = new CMemSubPicAllocator(dst.type, size);
+            std::shared_ptr<ISubPicAllocatorImpl> pAllocator = std::make_shared<CMemSubPicAllocator>(dst.type, size);
 
             HRESULT hr;
-            if(!(m_pSubPicQueue = new CSubPicQueueNoThread(pAllocator, &hr)) || FAILED(hr))
+            if(!(m_pSubPicQueue = std::make_shared<CSubPicQueueNoThread>(pAllocator, &hr)) || FAILED(hr))
             {
                 m_pSubPicQueue = NULL;
                 return(false);
             }
-        }
-
-        if(m_SubPicProviderId != (DWORD_PTR)(ISubPicProvider*)m_pSubPicProvider)
-        {
             m_pSubPicQueue->SetSubPicProvider(m_pSubPicProvider);
-            m_SubPicProviderId = (DWORD_PTR)(ISubPicProvider*)m_pSubPicProvider;
         }
 
-        CComPtr<ISubPic> pSubPic;
+        std::shared_ptr<ISubPicImpl> pSubPic;
         if(!m_pSubPicQueue->LookupSubPic(rt, pSubPic))
             return(false);
 
@@ -108,7 +102,7 @@ public:
     }
 
     CFilter(CString fn = _T(""), int CharSet = DEFAULT_CHARSET, float fps = -1)
-        : m_CharSet(CharSet), m_SubPicProviderId(0)
+        : m_CharSet(CharSet)
     {
         if(!fn.IsEmpty()) Open(fn, CharSet);
     }
@@ -125,9 +119,9 @@ public:
 
         if(!m_pSubPicProvider)
         {
-            if(CRenderedTextSubtitle* rts = new CRenderedTextSubtitle(&m_csSubLock))
+            if(auto rts = std::make_shared<CRenderedTextSubtitle>(&m_csSubLock))
             {
-                m_pSubPicProvider = (ISubPicProvider*)rts;
+                m_pSubPicProvider = rts;
                 if(rts->Open(CString(fn), CharSet)) SetFileName(fn);
                 else m_pSubPicProvider = NULL;
             }

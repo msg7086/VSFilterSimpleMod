@@ -168,7 +168,6 @@
     </ClCompile>
     <ClCompile Include="STS.cpp" />
     <ClCompile Include="TextFile.cpp" />
-    <ClCompile Include="USFSubtitles.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Rasterizer.h" />
@@ -177,7 +176,6 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="STS.h" />
     <ClInclude Include="TextFile.h" />
-    <ClInclude Include="USFSubtitles.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

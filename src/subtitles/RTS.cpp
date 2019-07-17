@@ -3290,19 +3290,6 @@ CSubtitle* CRenderedTextSubtitle::GetSubtitle(int entry)
     return(sub);
 }
 
-//
-
-STDMETHODIMP CRenderedTextSubtitle::NonDelegatingQueryInterface(REFIID riid, void** ppv)
-{
-    CheckPointer(ppv, E_POINTER);
-    *ppv = NULL;
-
-    return
-        QI(IPersist)
-        QI(ISubPicProvider)
-        __super::NonDelegatingQueryInterface(riid, ppv);
-}
-
 // ISubPicProvider
 
 STDMETHODIMP_(POSITION) CRenderedTextSubtitle::GetStartPosition(REFERENCE_TIME rt)
