@@ -25,6 +25,8 @@
 #include <vector>
 #include "TextFile.h"
 
+#define countof(array) (sizeof(array)/sizeof(array[0]))
+
 #ifdef _VSMOD // patch m003. random text points
 class MOD_RANDOM
 {

@@ -223,11 +223,6 @@
     <ResourceCompile Include="VSFilterMod.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\dsutil\dsutil.vcxproj">
-      <Project>{fc70988b-1ae5-4381-866d-4f405e28ac42}</Project>
-      <Private>false</Private>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
     <ProjectReference Include="..\libpng\libpng.vcxproj">
       <Project>{fc8080d1-603c-45ec-bcfa-7172e2f3d989}</Project>
       <Private>false</Private>

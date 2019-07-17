@@ -134,21 +134,9 @@ HRESULT CMemSubPic::ClearDirtyRect(DWORD color)
     BYTE* p = (BYTE*)m_spd.bits + m_spd.pitch * m_rcDirty.top + m_rcDirty.left * (m_spd.bpp >> 3);
     for(ptrdiff_t j = 0, h = m_rcDirty.Height(); j < h; j++, p += m_spd.pitch)
     {
-//
-
         int w = m_rcDirty.Width();
-#ifdef _WIN64
-        memsetd(p, color, w * 4); // nya
-#else
-        __asm
-        {
-            mov eax, color
-            mov ecx, w
-            mov edi, p
-            cld
-            rep stosd
-        }
-#endif
+        for(int i = 0; i < w; i++)
+            ((DWORD*)p)[i] = color;
     }
 
     m_rcDirty.SetRectEmpty();
