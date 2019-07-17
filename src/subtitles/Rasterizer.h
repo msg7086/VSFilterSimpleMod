@@ -22,7 +22,7 @@
 #pragma once
 
 #include <vector>
-#include "..\SubPic\ISubPic.h"
+#include "SubPic_common.hpp"
 #ifdef _VSMOD // patch m004. gradient colors
 #include "STS.h"
 #endif

@@ -27,7 +27,6 @@
 #include <atlconv.h>
 #include "resource.h"
 #include "..\subtitles\RTS.h"
-#include "..\SubPic\MemSubPic.h"
 #include "vfr.h"
 
 #include <memory>
@@ -45,8 +44,8 @@ private:
     CString m_fn;
 
 protected:
-    std::shared_ptr<CSubPicQueueNoThread> m_pSubPicQueue;
-    std::shared_ptr<ISubPicProviderImpl> m_pSubPicProvider;
+    std::shared_ptr<SubPicQueue> m_pSubPicQueue;
+    std::shared_ptr<SubPicProvider> m_pSubPicProvider;
     int m_CharSet;
 
 public:
@@ -72,10 +71,10 @@ public:
 
         if(!m_pSubPicQueue)
         {
-            std::shared_ptr<ISubPicAllocatorImpl> pAllocator = std::make_shared<CMemSubPicAllocator>(dst.type, size);
+            std::shared_ptr<SubPicAllocator> pAllocator = std::make_shared<SubPicAllocator>(dst.type, size);
 
             HRESULT hr;
-            if(!(m_pSubPicQueue = std::make_shared<CSubPicQueueNoThread>(pAllocator, &hr)) || FAILED(hr))
+            if(!(m_pSubPicQueue = std::make_shared<SubPicQueue>(pAllocator)))
             {
                 m_pSubPicQueue = NULL;
                 return(false);
@@ -83,7 +82,7 @@ public:
             m_pSubPicQueue->SetSubPicProvider(m_pSubPicProvider);
         }
 
-        std::shared_ptr<ISubPicImpl> pSubPic;
+        std::shared_ptr<SubPic> pSubPic;
         if(!m_pSubPicQueue->LookupSubPic(rt, pSubPic))
             return(false);
 

@@ -333,8 +333,8 @@ bool Rasterizer::PartialEndPath(HDC hdc, long dx, long dy)
         if(pNewPoints)
             mpPathPoints = pNewPoints;
 
-        BYTE* pTypes = DNew BYTE[nPoints];
-        POINT* pPoints = DNew POINT[nPoints];
+        BYTE* pTypes = new BYTE[nPoints];
+        POINT* pPoints = new POINT[nPoints];
 
         if(pNewTypes && pNewPoints && nPoints == GetPath(hdc, pPoints, pTypes, nPoints))
         {
@@ -432,7 +432,7 @@ bool Rasterizer::ScanConvert()
 
     // Initialize scanline list.
 
-    mpScanBuffer = DNew size_t[mHeight];
+    mpScanBuffer = new size_t[mHeight];
     memset(mpScanBuffer, 0, mHeight * sizeof(size_t));
 
     // Scan convert the outline.  Yuck, Bezier curves....
@@ -759,7 +759,7 @@ bool Rasterizer::Rasterize(int xsub, int ysub, int fBlur, double fGaussianBlur)
     // fixed image height
     mOverlayHeight = ((height + 14) >> 3) + 1;
 
-    mpOverlayBuffer = DNew byte[2 * mOverlayWidth * mOverlayHeight];
+    mpOverlayBuffer = new byte[2 * mOverlayWidth * mOverlayHeight];
     memset(mpOverlayBuffer, 0, 2 * mOverlayWidth * mOverlayHeight);
 
     // Are we doing a border?
@@ -810,7 +810,7 @@ bool Rasterizer::Rasterize(int xsub, int ysub, int fBlur, double fGaussianBlur)
         {
             size_t pitch = mOverlayWidth * 2;
 
-            byte *tmp = DNew byte[pitch*mOverlayHeight];
+            byte *tmp = new byte[pitch*mOverlayHeight];
             if(!tmp) return(false);
 
             int border = !mWideOutline.empty() ? 1 : 0;
@@ -832,7 +832,7 @@ bool Rasterizer::Rasterize(int xsub, int ysub, int fBlur, double fGaussianBlur)
         {
             int pitch = mOverlayWidth * 2;
 
-            byte* tmp = DNew byte[pitch*mOverlayHeight];
+            byte* tmp = new byte[pitch*mOverlayHeight];
             if(!tmp) return(false);
 
             memcpy(tmp, mpOverlayBuffer, pitch * mOverlayHeight);

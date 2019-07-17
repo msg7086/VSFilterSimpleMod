@@ -526,7 +526,7 @@ bool CWord::CreateOpaqueBox()
                m_width + w, m_ascent + m_descent + h,
                -w, m_ascent + m_descent + h);
 
-    m_pOpaqueBox = DNew CPolygon(style, str, 0, 0, 0, 1.0 / 8, 1.0 / 8, 0);
+    m_pOpaqueBox = new CPolygon(style, str, 0, 0, 0, 1.0 / 8, 1.0 / 8, 0);
 
     return(!!m_pOpaqueBox);
 }
@@ -592,7 +592,7 @@ CText::CText(STSStyle& style, CStringW str, int ktype, int kstart, int kend)
 
 CWord* CText::Copy()
 {
-    return(DNew CText(m_style, m_str, m_ktype, m_kstart, m_kend));
+    return(new CText(m_style, m_str, m_ktype, m_kstart, m_kend));
 }
 
 bool CText::Append(CWord* w)
@@ -665,7 +665,7 @@ CPolygon::~CPolygon()
 
 CWord* CPolygon::Copy()
 {
-    return(DNew CPolygon(m_style, m_str, m_ktype, m_kstart, m_kend, m_scalex, m_scaley, m_baseline));
+    return(new CPolygon(m_style, m_str, m_ktype, m_kstart, m_kend, m_scalex, m_scaley, m_baseline));
 }
 
 bool CPolygon::Append(CWord* w)
@@ -859,7 +859,7 @@ CClipper::CClipper(CStringW str, CSize size, double scalex, double scaley, bool 
     m_size.cx = m_size.cy = 0;
     m_pAlphaMask = NULL;
 
-    if(size.cx < 0 || size.cy < 0 || !(m_pAlphaMask = DNew BYTE[size.cx*size.cy])) return;
+    if(size.cx < 0 || size.cy < 0 || !(m_pAlphaMask = new BYTE[size.cx*size.cy])) return;
 
     m_size = size;
     m_inverse = inverse;
@@ -918,7 +918,7 @@ CClipper::~CClipper()
 
 CWord* CClipper::Copy()
 {
-    return(DNew CClipper(m_str, m_size, m_scalex, m_scaley, m_inverse));
+    return(new CClipper(m_str, m_size, m_scalex, m_scaley, m_inverse));
 }
 
 bool CClipper::Append(CWord* w)
@@ -1321,7 +1321,7 @@ CLine* CSubtitle::GetNextLine(POSITION& pos, int maxwidth)
 {
     if(pos == NULL) return(NULL);
 
-    CLine* ret = DNew CLine();
+    CLine* ret = new CLine();
     if(!ret) return(NULL);
 
     ret->m_width = ret->m_ascent = ret->m_descent = ret->m_borderX = ret->m_borderY = 0;
@@ -1410,7 +1410,7 @@ void CSubtitle::CreateClippers(CSize size)
         {
             CStringW str;
             str.Format(L"m %d %d l %d %d %d %d %d %d", 0, 0, w, 0, w, h, 0, h);
-            m_pClipper = DNew CClipper(str, size, 1, 1, false);
+            m_pClipper = new CClipper(str, size, 1, 1, false);
             if(!m_pClipper) return;
         }
 
@@ -1448,7 +1448,7 @@ void CSubtitle::CreateClippers(CSize size)
         {
             CStringW str;
             str.Format(L"m %d %d l %d %d %d %d %d %d", 0, 0, w, 0, w, h, 0, h);
-            m_pClipper = DNew CClipper(str, size, 1, 1, false);
+            m_pClipper = new CClipper(str, size, 1, 1, false);
             if(!m_pClipper) return;
         }
 
@@ -1644,7 +1644,7 @@ CRect CScreenLayoutAllocator::AllocRect(CSubtitle* s, int segment, int entry, in
 // CRenderedTextSubtitle
 
 CRenderedTextSubtitle::CRenderedTextSubtitle(STSStyle *styleOverride, bool doOverride)
-    : ISubPicProviderImpl(), m_doOverrideStyle(doOverride), m_pStyleOverride(styleOverride)
+    : SubPicProvider(), m_doOverrideStyle(doOverride), m_pStyleOverride(styleOverride)
 {
     m_size = CSize(0, 0);
 
@@ -1757,7 +1757,7 @@ void CRenderedTextSubtitle::ParseEffect(CSubtitle* sub, CString str)
         int delay, lefttoright = 0, fadeawaywidth = 0;
         if(_stscanf(s, _T("%d;%d;%d"), &delay, &lefttoright, &fadeawaywidth) < 1) return;
 
-        Effect* e = DNew Effect;
+        Effect* e = new Effect;
         if(!e) return;
 
         sub->m_effects[e->type = EF_BANNER] = e;
@@ -1779,7 +1779,7 @@ void CRenderedTextSubtitle::ParseEffect(CSubtitle* sub, CString str)
             bottom = tmp;
         }
 
-        Effect* e = DNew Effect;
+        Effect* e = new Effect;
         if(!e) return;
 
         sub->m_effects[e->type = EF_SCROLL] = e;
@@ -1808,7 +1808,7 @@ void CRenderedTextSubtitle::ParseString(CSubtitle* sub, CStringW str, STSStyle& 
 
         if(i < j)
         {
-            if(CWord* w = DNew CText(style, str.Mid(i, j - i), m_ktype, m_kstart, m_kend))
+            if(CWord* w = new CText(style, str.Mid(i, j - i), m_ktype, m_kstart, m_kend))
             {
                 sub->m_words.AddTail(w);
                 m_kstart = m_kend;
@@ -1817,7 +1817,7 @@ void CRenderedTextSubtitle::ParseString(CSubtitle* sub, CStringW str, STSStyle& 
 
         if(c == '\n')
         {
-            if(CWord* w = DNew CText(style, CStringW(), m_ktype, m_kstart, m_kend))
+            if(CWord* w = new CText(style, CStringW(), m_ktype, m_kstart, m_kend))
             {
                 sub->m_words.AddTail(w);
                 m_kstart = m_kend;
@@ -1825,7 +1825,7 @@ void CRenderedTextSubtitle::ParseString(CSubtitle* sub, CStringW str, STSStyle& 
         }
         else if(c == ' ' || c == '\x00A0')
         {
-            if(CWord* w = DNew CText(style, CStringW(c), m_ktype, m_kstart, m_kend))
+            if(CWord* w = new CText(style, CStringW(c), m_ktype, m_kstart, m_kend))
             {
                 sub->m_words.AddTail(w);
                 m_kstart = m_kend;
@@ -1842,7 +1842,7 @@ void CRenderedTextSubtitle::ParsePolygon(CSubtitle* sub, CStringW str, STSStyle&
 {
     if(!sub || !str.GetLength() || !m_nPolygon) return;
 
-    if(CWord* w = DNew CPolygon(style, str, m_ktype, m_kstart, m_kend, sub->m_scalex / (1 << (m_nPolygon - 1)), sub->m_scaley / (1 << (m_nPolygon - 1)), m_polygonBaselineOffset))
+    if(CWord* w = new CPolygon(style, str, m_ktype, m_kstart, m_kend, sub->m_scalex / (1 << (m_nPolygon - 1)), sub->m_scaley / (1 << (m_nPolygon - 1)), m_polygonBaselineOffset))
     {
         sub->m_words.AddTail(w);
         m_kstart = m_kend;
@@ -2302,12 +2302,12 @@ bool CRenderedTextSubtitle::ParseSSATag(CSubtitle* sub, CStringW str, STSStyle& 
 
             if(params.GetCount() == 1 && !sub->m_pClipper)
             {
-                sub->m_pClipper = DNew CClipper(params[0], CSize(m_size.cx >> 3, m_size.cy >> 3), sub->m_scalex, sub->m_scaley, invert);
+                sub->m_pClipper = new CClipper(params[0], CSize(m_size.cx >> 3, m_size.cy >> 3), sub->m_scalex, sub->m_scaley, invert);
             }
             else if(params.GetCount() == 2 && !sub->m_pClipper)
             {
                 int scale = max(wcstol(p, NULL, 10), 1);
-                sub->m_pClipper = DNew CClipper(params[1], CSize(m_size.cx >> 3, m_size.cy >> 3), sub->m_scalex / (1 << (scale - 1)), sub->m_scaley / (1 << (scale - 1)), invert);
+                sub->m_pClipper = new CClipper(params[1], CSize(m_size.cx >> 3, m_size.cy >> 3), sub->m_scalex / (1 << (scale - 1)), sub->m_scaley / (1 << (scale - 1)), invert);
             }
             else if(params.GetCount() == 4)
             {
@@ -2394,7 +2394,7 @@ bool CRenderedTextSubtitle::ParseSSATag(CSubtitle* sub, CStringW str, STSStyle& 
         {
             if(params.GetCount() == 7 && !sub->m_effects[EF_FADE])// {\fade(a1=param[0], a2=param[1], a3=param[2], t1=t[0], t2=t[1], t3=t[2], t4=t[3])
             {
-                if(Effect* e = DNew Effect)
+                if(Effect* e = new Effect)
                 {
                     for(ptrdiff_t i = 0; i < 3; i++)
                         e->param[i] = wcstol(params[i], NULL, 10);
@@ -2406,7 +2406,7 @@ bool CRenderedTextSubtitle::ParseSSATag(CSubtitle* sub, CStringW str, STSStyle& 
             }
             else if(params.GetCount() == 2 && !sub->m_effects[EF_FADE]) // {\fad(t1=t[1], t2=t[2])
             {
-                if(Effect* e = DNew Effect)
+                if(Effect* e = new Effect)
                 {
                     e->param[0] = e->param[2] = 0xff;
                     e->param[1] = 0x00;
@@ -2710,7 +2710,7 @@ bool CRenderedTextSubtitle::ParseSSATag(CSubtitle* sub, CStringW str, STSStyle& 
         {
             if((params.GetCount() == 4 || params.GetCount() == 6) && !sub->m_effects[EF_MOVE])
             {
-                if(Effect* e = DNew Effect)
+                if(Effect* e = new Effect)
                 {
 #ifdef _VSMOD // patch m005. add some move types
                     e->param[0] = 0; // обычный мов
@@ -2763,7 +2763,7 @@ bool CRenderedTextSubtitle::ParseSSATag(CSubtitle* sub, CStringW str, STSStyle& 
 #else
             if(params.GetCount() == 2 && !sub->m_effects[EF_ORG])
             {
-                if(Effect* e = DNew Effect)
+                if(Effect* e = new Effect)
                 {
                     e->param[0] = (int)(sub->m_scalex * wcstod(params[0], NULL) * 8);
                     e->param[1] = (int)(sub->m_scaley * wcstod(params[1], NULL) * 8);
@@ -2781,7 +2781,7 @@ bool CRenderedTextSubtitle::ParseSSATag(CSubtitle* sub, CStringW str, STSStyle& 
         {
             if(params.GetCount() == 2 && !sub->m_effects[EF_MOVE])
             {
-                if(Effect* e = DNew Effect)
+                if(Effect* e = new Effect)
                 {
 #ifdef _VSMOD // patch m005. add some move types
                     e->param[0] = 0; // usual move
@@ -2799,7 +2799,7 @@ bool CRenderedTextSubtitle::ParseSSATag(CSubtitle* sub, CStringW str, STSStyle& 
 #ifdef _VSMOD // patch m002. Z-coord
             else if(params.GetCount() == 3 && !sub->m_effects[EF_MOVE])
             {
-                if(Effect* e = DNew Effect)
+                if(Effect* e = new Effect)
                 {
                     e->param[0] = e->param[2] = (int)(sub->m_scalex * wcstod(params[0], NULL) * 8);
                     e->param[1] = e->param[3] = (int)(sub->m_scaley * wcstod(params[1], NULL) * 8);
@@ -3116,7 +3116,7 @@ CSubtitle* CRenderedTextSubtitle::GetSubtitle(int entry)
         else return(sub);
     }
 
-    sub = DNew CSubtitle();
+    sub = new CSubtitle();
     if(!sub) return(NULL);
 
     CStringW str = GetStrW(entry, true);

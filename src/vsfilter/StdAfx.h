@@ -36,8 +36,6 @@
 #endif
 #define _ATL_APARTMENT_THREADED
 
-#include "..\DSUtil\SharedInclude.h"
-
 #include <afxwin.h>
 #include <afxdisp.h>
 
@@ -48,8 +46,6 @@ extern CComModule _Module;
 #include <atlcom.h>
 
 #define AFX_CLASS AFX_CLASS_IMPORT
-
-#include "..\DSUtil\DSUtil.h"
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.

@@ -23,7 +23,7 @@
 
 #include "STS.h"
 #include "Rasterizer.h"
-#include "..\SubPic\ISubPic.h"
+#include "SubPic_common.hpp"
 #include <windowsx.h>
 
 class CMyFont : public CFont
@@ -219,7 +219,7 @@ public:
 };
 
 [uuid("537DCACA-2812-4a4f-B2C6-1A34C17ADEB0")]
-class CRenderedTextSubtitle : public CSimpleTextSubtitle, public ISubPicProviderImpl
+class CRenderedTextSubtitle : public CSimpleTextSubtitle, public SubPicProvider
 {
     CAtlMap<int, CSubtitle*> m_subtitleCache;
 

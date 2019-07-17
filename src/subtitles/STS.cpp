@@ -924,7 +924,7 @@ static bool OpenSubStationAlpha(CTextFile* file, CSimpleTextSubtitle& ret, int C
         }
         else if(entry == L"style")
         {
-            STSStyle* style = DNew STSStyle;
+            STSStyle* style = new STSStyle;
             if(!style) return(false);
 
             try
@@ -1230,7 +1230,7 @@ bool CSimpleTextSubtitle::CopyStyles(const CSTSStyleMap& styles, bool fAppend)
         STSStyle* val;
         styles.GetNextAssoc(pos, key, val);
 
-        STSStyle* s = DNew STSStyle;
+        STSStyle* s = new STSStyle;
         if(!s) return(false);
 
         *s = *val;
@@ -1329,7 +1329,7 @@ STSStyle* CSimpleTextSubtitle::CreateDefaultStyle(int CharSet)
 
     if(!m_styles.Lookup(def, ret))
     {
-        STSStyle* style = DNew STSStyle();
+        STSStyle* style = new STSStyle();
         style->charSet = CharSet;
         AddStyle(def, style);
         m_styles.Lookup(def, ret);
