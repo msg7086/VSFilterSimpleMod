@@ -58,19 +58,6 @@ public:
     BOOL ReadString(CStringW& str);
 };
 
-class CWebTextFile : public CTextFile
-{
-    LONGLONG m_llMaxSize;
-    CString m_tempfn;
-
-public:
-    CWebTextFile(LONGLONG llMaxSize = 1024 * 1024);
-
-    bool Open(LPCTSTR lpszFileName);
-    bool Save(LPCTSTR lpszFileName, enc e /*= ASCII*/);
-    void Close();
-};
-
 extern CStringW AToW(CStringA str);
 extern CStringA WToA(CStringW str);
 extern CString AToT(CStringA str);

@@ -1799,7 +1799,7 @@ bool CSimpleTextSubtitle::Open(CString fn, int CharSet, CString name)
 {
     Empty();
 
-    CWebTextFile f;
+    CTextFile f;
     if(!f.Open(fn)) return(false);
 
     fn.Replace('\\', '/');
@@ -1861,7 +1861,7 @@ bool CSimpleTextSubtitle::Open(CTextFile* f, int CharSet, CString name)
         MakeIndex(0);
 #endif
 #endif
-        CWebTextFile f2;
+        CTextFile f2;
         if(f2.Open(f->GetFilePath() + _T(".style")))
             OpenSubStationAlpha(&f2, *this, CharSet);
 
