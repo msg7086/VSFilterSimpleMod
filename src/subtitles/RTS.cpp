@@ -52,6 +52,8 @@ CMyFont::CMyFont(STSStyle& style)
     lf.lfOrientation = (LONG)style.mod_fontOrient;
 #endif
 
+    // auto font = cairo_win32_font_face_create_for_logfontw(lf);
+
     if(!CreateFontIndirect(&lf))
     {
         _tcscpy(lf.lfFaceName, _T("Arial"));
