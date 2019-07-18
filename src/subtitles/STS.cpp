@@ -2221,15 +2221,15 @@ void png_default_read_edata(png_structp png_ptr, png_bytep data, png_size_t leng
 {
     png_size_t check;
 
-    if(png_ptr->io_ptr == NULL)
-        return;
+    BYTE* eldata = (BYTE*)png_get_io_ptr(png_ptr);
 
-    BYTE* eldata = (BYTE*)png_ptr->io_ptr;
+    if(eldata == NULL)
+        return;
 
     // read from memory
     memcpy(data, eldata, length);
     eldata += length;
-    png_ptr->io_ptr = (png_voidp)eldata;
+    png_init_io(png_ptr, (png_FILE_p)eldata);
 }
 
 bool MOD_PNGIMAGE::operator == (MOD_PNGIMAGE& png)
@@ -2257,10 +2257,10 @@ bool MOD_PNGIMAGE::processData(png_structp png_ptr)
 
     png_read_info(png_ptr, info_ptr);
 
-    width = info_ptr->width;
-    height = info_ptr->height;
-    color_type = info_ptr->color_type;
-    bit_depth = info_ptr->bit_depth;
+    width = png_get_image_width(png_ptr, info_ptr);
+    height = png_get_image_height(png_ptr, info_ptr);
+    color_type = png_get_color_type(png_ptr, info_ptr);
+    bit_depth = png_get_bit_depth(png_ptr, info_ptr);
 
     // palette
     if(color_type == PNG_COLOR_TYPE_PALETTE)
@@ -2291,10 +2291,11 @@ bool MOD_PNGIMAGE::processData(png_structp png_ptr)
     /* read file */
     if(setjmp(png_jmpbuf(png_ptr))) return false;  // Error during read_image
 
-    bpp = info_ptr->rowbytes / width;
+    auto rowbytes = png_get_rowbytes(png_ptr, info_ptr);
+    bpp = rowbytes / width;
     pointer = (png_bytep*) malloc(sizeof(png_bytep) * height);
     for(int y = 0; y < height; y++)
-        pointer[y] = (png_byte*) malloc(info_ptr->rowbytes);
+        pointer[y] = (png_byte*) malloc(rowbytes);
 
     png_read_image(png_ptr, pointer);
     return true;
